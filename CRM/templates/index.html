@@ -189,9 +189,10 @@
                         </div>
                         <!-- address-line2 input-->
                         <!-- <div class="form-group">
-                            <label class="contact-label">Address Line 2</label>
-                                <div class="col-lg-12">
-                                    <input id="address-line2" name="address-line2" type="text" placeholder="Street address line 2" class="form-control">
+                            <label for="contact-address" class="col-lg-3">Street Address 2</label>
+                                <div class="col-lg-6">
+                                    <input id="address-streee" class="form-control" name="address-street" type="text" placeholder="ex: Street Address Continue Here">
+                                    <p class="help-block"></p>
                                 </div>
                         </div> -->
                         <!-- city input-->
@@ -209,25 +210,87 @@
                                 <p class="help-block"></p>
                             </div>
                         </div>
-
-<!--                         <div class="form-group">
-                            <label for="string" class="col-lg-12">Address</label>
-                            <div class="col-lg-12"> 
-                                <input type="address" class="form-control" id="contact-address" placeholder="Street Address">
-                            </div>
-                            <div class="col-lg-6"> 
-                                <input type="address" class="form-control" id="contact-address" placeholder="City">
-                            </div>
-                            <label for="contact-address" class="sr-only">Address</label>
-                            <div class="col-lg-6"> 
-                                <input type="address" class="form-control" id="contact-address" placeholder="State">
-                            </div>
+                        <!-- <div ng-controller="AccordionDemoCtrl">
+                            <accordion close-others="oneAtATime">
+                                <accordion-group heading="Dynamic Body Content">
+                                    <div ng-repeat="item in items"></div>
+                                    <button class="btn btn-default btn-sm" ng-click="addItem()">Add Item</button>
+                                </accordion-group>
+                            </accordion>
                         </div> -->
+                        
+
+                        <div class="accordion" id="accordion2">
+                            <div class="accordion-group">
+                                <div class="accordion-heading">
+                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne"><button type="button" class="btn btn-sm btn-success"><!-- <i class="glyphicon glyphicon-plus"></i> -->Add Service</button></a>
+                                </div>
+                                <br>
+                                <div id="collapseOne" class="accordion-body collapse out">
+                                    <div class="form-group">
+                                        <label for="contact-state" class="col-lg-12">Service Type</label>
+                                        <div class="col-lg-4 col-lg-offset-3">
+                                            <label>
+                                                <input type="checkbox" value="">
+                                                Maintenance
+                                            </label>
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <label>
+                                                <input type="checkbox" value="">
+                                                Repair
+                                            </label>
+                                        </div>
+                                        <div class="col-lg-4 col-lg-offset-3">
+                                            <label>
+                                                <input type="checkbox" value="">
+                                                Service Call
+                                            </label>
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <label>
+                                                <input type="checkbox" value="">
+                                                Others
+                                            </label>
+                                        </div>
+                                        <label for="contact-state" class="col-lg-3">If other:</label>
+                                        <div class="col-lg-6">
+                                            <input id="description" name="description" type="text" placeholder="Description of service" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="contact-state" class="col-lg-3">Description of problem</label>
+                                        <div class="col-lg-6">
+                                            <textarea class="form-control" rows="3" placeholder="Please enter detail decription of problem here..."></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="contact-price" class="col-lg-3">Quote:</label>
+                                        <div class="col-lg-6">
+                                            <input id="description" name="description" type="text" placeholder="Price in dollar (ex: 100.00)" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="contact-price" class="col-lg-3">Appointment Date:</label>
+                                        <div class="col-lg-6">
+                                            <input id="description" name="description" type="text" placeholder="Date in (MM/DD/YYYY)" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="contact-price" class="col-lg-3">Appointment Time:</label>
+                                        <div class="col-lg-6">
+                                            <input id="description" name="description" type="text" placeholder="Time in (HH:MM AM/PM)" class="form-control">
+                                        </div>
+                                    </div>
+                                                                       
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-default btn-sm ng-scope" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary"><i class="glyphicon glyphicon-save"></i>Save changes</button>
                     </div>
                 </form>
             </div>
@@ -242,7 +305,7 @@
     <script src="static/js/jquery.metisMenu.js"></script>>
     <!-- SB Admin Scripts - Include with every page -->
     <script src="static/js/sb-admin.js"></script>
-
+    <!--<script src="https://github.com/angular-ui/bootstrap/blob/master/src/accordion/docs/demo.js"></script>-->
 </body>
 
 </html>
