@@ -1,0 +1,15 @@
+
+from config import Config
+
+class LocalConfig(Config):
+	STATIC_FOLDER = "templates/static/"
+
+	DB_HOST = "localhost"
+	DB_USER = ""
+	DB_PASS = ""
+	DB_NAME = ""
+
+	KEY = "" # Use manage.py generate_secret_key
+	AGE = 60 * 60 * 24 * 30 # 1 month
+
+

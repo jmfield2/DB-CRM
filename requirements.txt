@@ -1,0 +1,6 @@
+oursql
+flask
+flask-script
+itsdangerous
+passlib
+
