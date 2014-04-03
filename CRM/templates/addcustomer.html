@@ -40,6 +40,9 @@
                         </li>
                         <li><a href="#"><i class="glyphicon glyphicon-cog"></i> Settings</a>
                         </li>
+                        </li>
+                        <li><a href="#"><i class="glyphicon glyphicon-question-sign"></i> Help </a>
+                        </li>
                         <li class="divider"></li>
                         <li><a href="login.html"><i class="glyphicon glyphicon-log-out"></i> Logout</a>
                         </li>
@@ -78,165 +81,165 @@
 
 
         <div id="page-wrapper">
-            <div class="row">
-                <form class = "form-horizontal">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
-                        </button>
-                        <h4 class="modal-title" id="myModalLabel">Customer Information: </h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class = "form-group">
-                            <!-- <h5 class="contact-title">Customer Name</h5> -->
-                            <label for="contact-name" class="col-lg-3">First Name</label>
-                            <div class="col-lg-6">
-                                <input type="text" class="form-control" id="contact-name" placeholder="ex: John">
-                                <p class="help-block"></p>
-                            </div>
-                        </div>
-                        <div class = "form-group">
-                            <label for="contact-name" class="col-lg-3">Last Name</label>
-                            <div class="col-lg-6">
-                                <input type="text" class="form-control" id="contact-name" placeholder="ex: Smith">
-                                <p class="help-block"></p>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="contact-email" class="col-lg-3">Email</label>
-                            <div class="col-lg-6"> 
-                                <input type="email" class="form-control" id="contact-email" placeholder="ex: myname@example.com">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="contact-phone" class="col-lg-3">Phone Number</label>
-                            <div class="col-lg-6"> 
-                                <input type="phone" class="form-control" id="contact-phone" placeholder="ex: (813)999-9999">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="contact-address" class="col-lg-3">Street Address</label>
-                                <div class="col-lg-6">
-                                    <input id="address-streee" class="form-control" name="address-street" type="text" placeholder="ex: 4402 Curry Rd.">
-                                    <p class="help-block"></p>
-                                </div>
-                        </div>
-                        <!-- address-line2 input-->
-                        <!-- <div class="form-group">
-                            <label for="contact-address" class="col-lg-3">Street Address 2</label>
-                                <div class="col-lg-6">
-                                    <input id="address-streee" class="form-control" name="address-street" type="text" placeholder="ex: Street Address Continue Here">
-                                    <p class="help-block"></p>
-                                </div>
-                        </div> -->
-                        <!-- city input-->
-                        <div class="form-group">
-                            <label for="contact-city" class="col-lg-3">City</label>
-                            <div class="col-lg-6">
-                                <input id="city" name="city" type="text" placeholder="ex: Tampa" class="form-control">
-                                <p class="help-block"></p>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="contact-state" class="col-lg-3">State</label>
-                            <div class="col-lg-6">
-                                <input id="state" name="state" type="text" placeholder="ex: Florida" class="form-control">
-                                <p class="help-block"></p>
-                            </div>
-                        </div>
-                        <!-- <div ng-controller="AccordionDemoCtrl">
-                            <accordion close-others="oneAtATime">
-                                <accordion-group heading="Dynamic Body Content">
-                                    <div ng-repeat="item in items">item</div>
-                                    <button class="btn btn-default btn-sm" ng-click="addItem()">Add Item</button>
-                                </accordion-group>
-                            </accordion>
-                        </div> -->
-                        
-
-                        <div class="accordion" id="accordion2">
-                            <div class="accordion-group">
-                                <div class="accordion-heading">
-                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne"><button type="button" class="btn btn-sm btn-success"><!-- <i class="glyphicon glyphicon-plus"></i> -->Add Service</button></a>
-                                </div>
-                                <br>
-                                <div id="collapseOne" class="accordion-body collapse out">
-                                    <div class="form-group">
-                                        <label for="contact-state" class="col-lg-12">Service Type</label>
-                                        <div class="col-lg-4 col-lg-offset-3">
-                                            <label>
-                                                <input type="checkbox" value="">
-                                                Maintenance
-                                            </label>
-                                        </div>
-                                        <div class="col-lg-5">
-                                            <label>
-                                                <input type="checkbox" value="">
-                                                Repair
-                                            </label>
-                                        </div>
-                                        <div class="col-lg-4 col-lg-offset-3">
-                                            <label>
-                                                <input type="checkbox" value="">
-                                                Service Call
-                                            </label>
-                                        </div>
-                                        <div class="col-lg-5">
-                                            <label>
-                                                <input type="checkbox" value="">
-                                                Others
-                                            </label>
-                                        </div>
-                                        <label for="contact-state" class="col-lg-3">If other:</label>
-                                        <div class="col-lg-6">
-                                            <input id="description" name="description" type="text" placeholder="Description of service" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="contact-state" class="col-lg-3">Description of problem</label>
-                                        <div class="col-lg-6">
-                                            <textarea class="form-control" rows="3" placeholder="Please enter detail decription of problem here..."></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="contact-price" class="col-lg-3">Quote:</label>
-                                        <div class="col-lg-6">
-                                            <div class="input-prepend input-append">
-                                                <span class="add-on">$</span>
-                                                    <input class="span2" id="appendedPrependedInput" type="text">
-                                                <span class="add-on">.00</span>
-                                            </div>
-                                        </div>
-                                            
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="contact-price" class="col-lg-3">Appointment Time:</label>
-                                        <div class="col-lg-6">
-                                            <div id="datetimepicker2" class="input-append">   
-                                                <input data-format="MM/dd/yyyy HH:mm:ss PP" type="text"></input>
-                                                <span class="add-on">
-                                                    <i data-time-icon="glyphicon glyphicon-time" data-date-icon="glyphicon glyphicon-calendar"></i>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                                         
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default btn-sm ng-scope" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary"><i class="glyphicon glyphicon-save"></i>Save changes</button>
-                    </div>
-                </form>
+             <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Add Customer <!-- Dashboard --></h1>
+                </div>
+                <!-- /.col-lg-12 -->
             </div>
-            <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-    </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Customer Information: 
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <form class = "form-horizontal">
+                                <div class = "form-group">
+                                    <!-- <h5 class="contact-title">Customer Name</h5> -->
+                                    <label for="contact-name" class="col-lg-3">First Name</label>
+                                    <div class="col-lg-6">
+                                        <input type="text" class="form-control" id="contact-name" placeholder="ex: John">
+                                        <p class="help-block"></p>
+                                    </div>
+                                </div>
+                                <div class = "form-group">
+                                    <label for="contact-name" class="col-lg-3">Last Name</label>
+                                    <div class="col-lg-6">
+                                        <input type="text" class="form-control" id="contact-name" placeholder="ex: Smith">
+                                        <p class="help-block"></p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="contact-email" class="col-lg-3">Email</label>
+                                    <div class="col-lg-6"> 
+                                        <input type="email" class="form-control" id="contact-email" placeholder="ex: myname@example.com">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="contact-phone" class="col-lg-3">Phone Number</label>
+                                    <div class="col-lg-6"> 
+                                        <input type="phone" class="form-control" id="contact-phone" placeholder="ex: (813)999-9999">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="contact-address" class="col-lg-3">Street Address</label>
+                                        <div class="col-lg-6">
+                                            <input id="address-streee" class="form-control" name="address-street" type="text" placeholder="ex: 4402 Curry Rd.">
+                                            <p class="help-block"></p>
+                                        </div>
+                                </div>
+                                <!-- city input-->
+                                <div class="form-group">
+                                    <label for="contact-city" class="col-lg-3">City</label>
+                                    <div class="col-lg-6">
+                                        <input id="city" name="city" type="text" placeholder="ex: Tampa" class="form-control">
+                                        <p class="help-block"></p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="contact-state" class="col-lg-3">State</label>
+                                    <div class="col-lg-6">
+                                        <input id="state" name="state" type="text" placeholder="ex: Florida" class="form-control">
+                                        <p class="help-block"></p>
+                                    </div>
+                                </div>
+                                <!-- <div ng-controller="AccordionDemoCtrl">
+                                    <accordion close-others="oneAtATime">
+                                        <accordion-group heading="Dynamic Body Content">
+                                            <div ng-repeat="item in items">item</div>
+                                            <button class="btn btn-default btn-sm" ng-click="addItem()">Add Item</button>
+                                        </accordion-group>
+                                    </accordion>
+                                </div> -->
 
+                                <div class="accordion" id="accordion2">
+                                    <div class="accordion-group">
+                                        <div class="accordion-heading">
+                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne"><button type="button" class="btn btn-sm btn-success"><!-- <i class="glyphicon glyphicon-plus"></i> -->Add Service</button></a>
+                                        </div>
+                                        <br>
+                                        <div id="collapseOne" class="accordion-body collapse out">
+                                            <div class="form-group">
+                                                <label for="contact-state" class="col-lg-12">Service Type</label>
+                                                <div class="col-lg-4 col-lg-offset-3">
+                                                    <label>
+                                                        <input type="checkbox" value="">
+                                                        Maintenance
+                                                    </label>
+                                                </div>
+                                                <div class="col-lg-5">
+                                                    <label>
+                                                        <input type="checkbox" value="">
+                                                        Repair
+                                                    </label>
+                                                </div>
+                                                <div class="col-lg-4 col-lg-offset-3">
+                                                    <label>
+                                                        <input type="checkbox" value="">
+                                                        Service Call
+                                                    </label>
+                                                </div>
+                                                <div class="col-lg-5">
+                                                    <label>
+                                                        <input type="checkbox" value="">
+                                                        Others
+                                                    </label>
+                                                </div>
+                                                <label for="contact-state" class="col-lg-3">If other:</label>
+                                                <div class="col-lg-6">
+                                                    <input id="description" name="description" type="text" placeholder="Description of service" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="contact-state" class="col-lg-3">Description of problem</label>
+                                                <div class="col-lg-6">
+                                                    <textarea class="form-control" rows="3" placeholder="Please enter detail decription of problem here..."></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="contact-price" class="col-lg-3">Quote:</label>
+                                                <div class="col-lg-6">
+                                                    <div class="input-prepend input-append">
+                                                        <span class="add-on">$</span>
+                                                            <input class="span2" id="appendedPrependedInput" type="text">
+                                                        <span class="add-on">.00</span>
+                                                    </div>
+                                                </div>
+                                                    
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="contact-price" class="col-lg-3">Appointment Time:</label>
+                                                <div class="col-lg-6">
+                                                    <div id="datetimepicker2" class="input-append">   
+                                                        <input data-format="MM/dd/yyyy HH:mm:ss PP" type="text"></input>
+                                                        <span class="add-on">
+                                                            <i data-time-icon="glyphicon glyphicon-time" data-date-icon="glyphicon glyphicon-calendar"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                                                 
+                                        </div>
+                                    </div>
+                                </div>
+
+                        <!-- </div> -->
+                                <div class="form-footer">
+                                    <!-- <button type="button" class="btn btn-default btn-sm ng-scope" data-dismiss="modal">Clear</button> -->
+                                    <button type="button" class="btn btn-primary"><i class="glyphicon glyphicon-save"></i>Save changes</button>
+                                </div>
+                            </form>
+                        </div>   
+                    </div>
+                </div>
+            <!-- /.modal-content -->
+            </div>
+        <!-- /.modal-dialog -->
+        </div>
+    </div>
     <!-- Core Scripts - Include with every page -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script type="text/javascript" src="static/js/bootstrap.min.js"></script>
