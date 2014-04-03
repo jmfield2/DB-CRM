@@ -200,13 +200,18 @@
                                     <div class="form-group">
                                         <label for="contact-price" class="col-lg-3">Quote:</label>
                                         <div class="col-lg-6">
-                                            <input id="description" name="description" type="text" placeholder="Price in dollar (ex: 100.00)" class="form-control">
+                                            <div class="input-prepend input-append">
+                                                <span class="add-on">$</span>
+                                                    <input class="span2" id="appendedPrependedInput" type="text">
+                                                <span class="add-on">.00</span>
+                                            </div>
                                         </div>
+                                            
                                     </div>
                                     <div class="form-group">
                                         <label for="contact-price" class="col-lg-3">Appointment Time:</label>
                                         <div class="col-lg-6">
-                                            <div id="datetimepicker2" class="input-append">
+                                            <div id="datetimepicker2" class="input-append">   
                                                 <input data-format="MM/dd/yyyy HH:mm:ss PP" type="text"></input>
                                                 <span class="add-on">
                                                     <i data-time-icon="glyphicon glyphicon-time" data-date-icon="glyphicon glyphicon-calendar"></i>
