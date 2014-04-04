@@ -171,7 +171,29 @@ def configure_before_request(app):
 def configure_views(app):
 	"""Add some simple views here like index_view"""
 
+	@app.route("/index.html")
 	@app.route("/")
 	def home():
 		return render_template("index.html")
 
+        @app.route("/dashboard.html")
+        def dashboard():
+                return render_template("dashboard.html")
+		
+        @app.route("/login.html")
+        def login():
+                return render_template("login.html")
+
+        @app.route("/addcustomer.html")
+        def customer_add():
+                return render_template("addcustomer.html")
+
+        @app.route("/customer.html")
+        def customer():
+                return render_template("customer.html")
+
+        @app.route("/userprofile.html")
+        def userprofile():
+                return render_template("userprofile.html")
+
+	
