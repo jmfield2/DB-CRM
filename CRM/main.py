@@ -44,7 +44,7 @@ def app_factory(config, app_name=None, blueprints=None):
     configure_logger(app, config)
     configure_blueprints(app, blueprints or config.BLUEPRINTS)
     configure_error_handlers(app)
-    configure_database(app)
+    app = configure_database(app)
     configure_context_processors(app)
     configure_template_filters(app)
     configure_extensions(app)
@@ -53,6 +53,8 @@ def app_factory(config, app_name=None, blueprints=None):
 
     return app
 
+
+from sessions import *
 
 def configure_app(app, config):
     """Loads configuration class into flask app"""
@@ -65,6 +67,9 @@ def configure_app(app, config):
 		if hasattr(app, key): setattr(app, key, val)
 	except:
 		pass
+
+    # http://flask.pocoo.org/snippets/51/
+    app.session_interface = ItsdangerousSessionInterface()
 
     return app
 
@@ -148,6 +153,8 @@ def configure_database(app):
     db.app = app
     db.init_app(app)
 
+    app.db = db
+    return app
 
 def configure_context_processors(app):
     """Modify templates context here"""
@@ -168,32 +175,5 @@ def configure_before_request(app):
     pass
 
 
-def configure_views(app):
-	"""Add some simple views here like index_view"""
+from views import *
 
-	@app.route("/index.html")
-	@app.route("/")
-	def home():
-		return render_template("index.html")
-
-        @app.route("/dashboard.html")
-        def dashboard():
-                return render_template("dashboard.html")
-		
-        @app.route("/login.html")
-        def login():
-                return render_template("login.html")
-
-        @app.route("/addcustomer.html")
-        def customer_add():
-                return render_template("addcustomer.html")
-
-        @app.route("/customer.html")
-        def customer():
-                return render_template("customer.html")
-
-        @app.route("/userprofile.html")
-        def userprofile():
-                return render_template("userprofile.html")
-
-	

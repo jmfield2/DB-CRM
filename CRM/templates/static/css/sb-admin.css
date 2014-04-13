@@ -55,6 +55,7 @@
 
 .navbar-top-links .dropdown-menu li {
     display: block;
+    min-width:210px;
 }
 
 .navbar-top-links .dropdown-menu li:last-child {
