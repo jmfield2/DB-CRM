@@ -22,33 +22,9 @@ def auth_required():
         return decorator
 
 
+from models import *
+
 def configure_views(app):
-
-	# db models
-	class user:
-		m = None
-
-		def __init__(self, user_id=None, email=None):
-			if user_id is not None:
-			        sql = "SELECT * FROM Users where ID = ? AND status = 1"
-				data = [user_id]
-			elif email is not None:
-				sql = "SELECT * FROM Users where Username = ? AND status = 1"
-				data = [email]
-		
-	                curs=app.db.db.cursor(oursql.DictCursor)
-        	        try:
-        		        curs.execute(sql, data)
-                        	self.m = curs.fetchone()
-			except:
-				pass
-
-		def get(self):
-			return self.m
-
-		# get, set
-
-	# Access, Appointments, Customers/Customer_Contact, Quotes, Services
 
 	@app.route("/logout")
 	def logout():
@@ -93,28 +69,52 @@ def configure_views(app):
 	@app.route("/")
 	@auth_required()
 	def dashboard():
-		u = user(session['uid']).get()
-
+		u = user(user_id=session['uid']).get()
 		del u['Password']
+
 		return render_template("index.html", user=u)
 
-		
-	# Services, Quotes, Appointments
-	# Finish appointment ...
+	# XXX make these blueprints?
 
-        @app.route("/addcustomer.html")
+	# Customers 
+
+	@app.route("/customers/search.json")
+	@auth_required()
+	def customer_search_json():
+		# sEcho, iTotalRecords, iTotalDisplayRecords
+		resp = {'aaData':[['type','name','user','date','status','actions']]}
+
+		import json
+		return json.dumps(resp)
+
+	# delete
+
+        @app.route("/customers/add")
 	@auth_required()
         def customer_add():
-                return render_template("addcustomer.html")
+                return render_template("customer_add.html")
 
-        @app.route("/customer.html")
+        @app.route("/customers/index")
 	@auth_required()
-        def customer():
-                return render_template("customer.html")
+        def customer_index():
+		u = user(user_id=session['uid']).get()
+		del u['Password']
+
+                return render_template("customer_index.html", user=u)
+
+
+	# Services
+
+	# Quotes
+
+	# Appointments/Tasks
+
+	# Users
 
         @app.route("/userprofile.html")
 	@auth_required()
         def userprofile():
                 return render_template("userprofile.html")
 
-	
+	# Access
+
