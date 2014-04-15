@@ -6,7 +6,7 @@ An "Online Enterprise Information System" to track customers, services, appointm
 
 Install:
 =======
-pip -r requirements.txt
+pip install -r requirements.txt
 
 Usage:
 =====
