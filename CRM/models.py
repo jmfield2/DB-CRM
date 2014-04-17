@@ -9,6 +9,7 @@ import flask
 class Model(object):
 	m = None
 	curs = None
+	changed = []
 
 	def __init__(self, *args, **kwargs):
 
@@ -43,9 +44,17 @@ class Model(object):
 		if self.m is None: raise StopIteration
 		return self
 
+	def __setitem__(self, key, val):
+
+		self.hydrate()
+
+		if key in self.m: 
+			self.m[key] = val
+			self.changed.append(key)
+
 	def __getitem__(self, key):
 		self.hydrate()
-			
+	
 		if key in self.m: return self.m[key]
 		else: return None
 
@@ -67,7 +76,9 @@ class Model(object):
 			self.m = self.curs.fetchone()
 			# XXX hydrate self.data 
 		except:
-			return
+			self.new() # so self.m is not None
+
+		self.changed = []
 
 	# filter XXX
 	# set from dict
@@ -75,13 +86,14 @@ class Model(object):
 	def new(self):
 		if self.curs: self.curs.close()
 		self.m = self.data
+		self.changed = []
+		return self
 
-	def __setitem__(self, key, val):
-		# XXX set model changed
-		if self.m is None: self.new()
-		if key in self.m: self.m[key] = val
-
-	# XXX accept dict to insert/update
+	def set_dict(self, d):
+		self.new() # OK? XXX
+		for key in d:
+			if key in self.m: self.m[key] = d[key]
+		return self
 
 	def insert(self):
 		d = {}
@@ -89,7 +101,8 @@ class Model(object):
 		row = dict(self.m) # need one(self) XXX	
 		for k in row:
 			if row[k] is None or len(str(row[k])) <= 0: continue
-			d[k] = row[k]
+                        if isinstance(row[k], long): d[k] = int(row[k]) # OurSQL and python long dont work well together
+			else: d[k] = row[k]
 			sql.append("?")	
 		
 		q = sql[0] + "(" + ','.join(d.keys()) + ")"
@@ -97,11 +110,13 @@ class Model(object):
 
 		ret = False
 		try:
-			c=app.db.db.cursor(oursql.DictCursor)
-			c.execute(q, d)
+			c=flask.current_app.db.db.cursor(oursql.DictCursor)
+			c.execute(q, d.values())
 			ret = c.lastrowid
 			c.close()
-		except:
+		except Exception as e:
+			flask.flash("%s Insert Failed: %s" % (self.table, str(e)) )
+			print str(e)
 			pass
 
 		# hydrate with self.primary/curs.lastrowid
@@ -112,21 +127,28 @@ class Model(object):
 		dv = []
 		primary = "ID" if not hasattr(self, 'primary') else self.primary
 		sql = ["UPDATE %s SET " % self.table]
+		self.hydrate()
 		row = dict(self.m) # XXX
 		for k in row:
 			if k == primary or row[k] is None: continue
+			if k not in self.changed: continue
 			dk.append(k)
 			dv.append(row[k])
+
+		if len(dk) <= 0: return 
+
 		q = sql[0] + '=?,'.join(dk) + "=?"
 		q += " WHERE " + primary + "=?"
 		dv.append(self.m[primary])
 
 		try:
-			c=app.db.db.cursor(oursql.DictCursor)
+			c=flask.current_app.db.db.cursor(oursql.DictCursor)
 			c.execute(q, dv)
 			c.close()
 			ret=True
-		except:
+		except Exception as e:
+                        flask.flash("%s Update Failed: %s" % (self.table, str(e)) )
+			print str(e)
 			ret=False
 
 		return ret

@@ -5,6 +5,7 @@ from functools import update_wrapper
 
 import oursql
 
+import datetime
 
 # check login
 def auth_required():
@@ -62,7 +63,6 @@ def configure_views(app):
                 return render_template("login.html", url=request.url)
 
 
-
 	# the remaining views below require authentication
 
 	@app.route("/dashboard")
@@ -74,25 +74,105 @@ def configure_views(app):
 
 		return render_template("index.html", user=u)
 
-	# XXX make these blueprints?
 
 	# Customers 
+
+	# customers.init_views(app)
 
 	@app.route("/customers/search.json")
 	@auth_required()
 	def customer_search_json():
 		# sEcho, iTotalRecords, iTotalDisplayRecords
+
+		# sSearch?
+
 		resp = {'aaData':[['type','name','user','date','status','actions']]}
 
 		import json
 		return json.dumps(resp)
 
 	# delete
+	@app.route("/customers/delete/<int:id>")
+	@auth_required()
+	def customer_delete(id):
+		return ""
 
-        @app.route("/customers/add")
+	# delete_confirm
+
+	# view
+	@app.route("/customers/view/<int:id>")
+	@auth_required()
+	def customer_view(id):
+		return ""
+
+	# edit
+	@app.route("/customers/edit/<int:id>", methods=['GET', 'POST'])
+	@auth_required()
+	def customer_edit(id):
+		return ""
+
+        @app.route("/customers/add", methods=['GET', 'POST'])
 	@auth_required()
         def customer_add():
-                return render_template("customer_add.html")
+                u = user(user_id=session['uid']).get()
+                del u['Password']
+
+		if 'customer_type' in request.form:
+			d = {"status":1, "owner_id":u['ID'], "customer_type":request.form.get('customer_type', False), "Name":request.form.get('Name', False), "date_created":datetime.datetime.now(), "date_modified":datetime.datetime.now()}
+
+			id = customers().set_dict(d).insert()
+	
+			# customers_contact customer_id contact_type name data 
+			if id is not False:
+				cid = False
+				names = ["email", "phone", "address-street", "address-city", "address-state"]
+				
+				for name in names:
+					if request.form.get(name, False) is not False and len(request.form.get(name)) > 0:
+						d = {"contact_type":request.form.get('contact_type', 'main'), "customer_id":id,'name':name,'data':request.form.get(name, False), "created_by":session['uid'], "date_created":datetime.datetime.now(), "date_modified":datetime.datetime.now()}
+
+						ret = customer_contact().set_dict(d).insert()			
+						if cid == False: cid = ret
+
+				# XXX ENFORCE UNIQUE ON CUSTOMERS_CONTACT XXX
+
+				# dynamic details
+				names = request.form.getlist("contact-name[]")
+				values = request.form.getlist("contact-data[]")
+				for i in range(0, len(names)):
+					name = names[i]
+					val = values[i]
+
+					d = {"contact_type":request.form.get('contact_type', 'main'), "customer_id":id,'name':name,'data':val, "created_by":session['uid'], "date_created":datetime.datetime.now(), "date_modified":datetime.datetime.now()}
+
+                                        ret = customer_contact().set_dict(d).insert()
+                                        if cid == False: cid = ret					
+
+				if cid is not False:
+					c = customers(ID=id)
+					c['primary_contact_id'] = cid
+					c.update()
+
+			flash("Customer Added (ID=%d)" % id)
+
+			# services customer_id Name service_type description owner_id status
+			if id is not False and request.form.get('service-type', False) is not False:
+				d = {"customer_id":id, "Name":request.form.get("service-name"), "description":request.form.get("service-description"), "service_type":request.form.get("service-type"), "owner_id":session['uid'], "status":1, "date_created":datetime.datetime.now(), "date_modified":datetime.datetime.now()}
+				if d["service_type"] == "Other": d["service_type"] = request.form.get("service-other-type", "")					
+				s = services().set_dict(d).insert()
+	
+				# quotes service_id, quote_type amount owner_id status
+				d = {"service_id":s, "quote_type":request.form.get("quote-type"), "amount":request.form.get("quote-amount"), "owner_id":session['uid'], "status":1, "paid":0, "date_created":datetime.datetime.now(), "date_modified":datetime.datetime.now()}
+				quotes().set_dict(d).insert()
+
+				# appointments service_id user_id scheduled extra status
+				d = {"service_id":s, "user_id":request.form.get('contact-quote-user'), "scheduled":request.form.get("appointment-date"), "extra":"-", "status":1, "actual":"0000-00-00", "date_created":datetime.datetime.now(), "date_modified":datetime.datetime.now()}
+
+				appointments().set_dict(d).insert()
+
+				flash("Service Added (ID=%d)" % s)
+
+                return render_template("customer_add.html", user=u)
 
         @app.route("/customers/index")
 	@auth_required()
@@ -102,12 +182,6 @@ def configure_views(app):
 
                 return render_template("customer_index.html", user=u)
 
-
-	# Services
-
-	# Quotes
-
-	# Appointments/Tasks
 
 	# Users
 

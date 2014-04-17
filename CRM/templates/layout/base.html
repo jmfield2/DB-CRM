@@ -72,17 +72,9 @@
                     <li>
                         <a href="{{ url_for('dashboard') }}"><i class="glyphicon glyphicon-tasks"></i> Dashboard </a>
                     </li>
+
                     <li>
                         <a href="{{ url_for('customer_index') }}"><i class="glyphicon glyphicon-search"></i> Customers </a>
-                    </li>
-                    <li>
-                        <a href="#"><i class="glyphicon glyphicon-plus"></i> Services </a>
-                    </li>
-                    <li>
-                        <a href="#"><i class="glyphicon glyphicon-plus"></i> Quotes </a>
-                    </li>
-                    <li>
-                        <a href="#"><i class="glyphicon glyphicon-plus"></i> Appointments </a>
                     </li>
 
                     <li>
@@ -105,11 +97,12 @@
     {% block javascript %}
     <!-- Core Scripts - Include with every page -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script src="static/js/bootstrap.min.js"></script>
-    <script src="static/js/jquery.metisMenu.js"></script>
+
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/jquery.metisMenu.js"></script>
 
     <!-- SB Admin Scripts - Include with every page -->
-    <script src="static/js/sb-admin.js"></script>
+    <script src="/static/js/sb-admin.js"></script>
     {% endblock %}
  
     <!-- Placed at the end of the document so the pages load faster -->
