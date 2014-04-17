@@ -153,7 +153,7 @@ def configure_views(app):
 					c['primary_contact_id'] = cid
 					c.update()
 
-			flash("Customer Added (ID=%d)" % id)
+				flash("Customer Added (ID=%d)" % id)
 
 			# services customer_id Name service_type description owner_id status
 			if id is not False and request.form.get('service-type', False) is not False:
