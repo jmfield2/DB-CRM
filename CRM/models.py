@@ -18,14 +18,32 @@ class Model(object):
 		d = []
 		sql = ["SELECT * FROM %s " % self.table]
 		for key in kwargs:
-			if key in self.data:
-				if isinstance(kwargs[key], long): d.append(int(kwargs[key])) 
-				else: d.append(kwargs[key])
-				sql.append("%s = ?" % key)
+			if '__' in key:
+				k = key.split("__")
+				dkey = k[0]
+				arg = k[1]
+			else: 
+				arg = False
+				dkey = key
+
+			if dkey in self.data:
+				val = kwargs[key]
+
+				if isinstance(val, long): val = int(val)
+
+				if arg == "contains":			
+					sql.append("%s LIKE ?" % dkey)
+					d.append("%%%s%%" % val)
+				else:
+					sql.append("%s = ?" % dkey)
+					d.append(val)
+
 				# logic XXX
 
 		if len(sql) > 1: sql[0] += "WHERE "	
 		q = "%s%s" % (sql[0], ' AND '.join(sql[1:]))
+
+		print q
 
                 self.curs=app.db.db.cursor(oursql.DictCursor)
                 try:
@@ -95,6 +113,9 @@ class Model(object):
 			if key in self.m: self.m[key] = d[key]
 		return self
 
+	def delete(self):
+		return self	
+
 	def insert(self):
 		d = {}
 		sql = ["INSERT INTO %s " % self.table]
@@ -107,6 +128,8 @@ class Model(object):
 		
 		q = sql[0] + "(" + ','.join(d.keys()) + ")"
 		q += " VALUES (" + ','.join(sql[1:]) + ")"
+
+		print q
 
 		ret = False
 		try:
@@ -140,6 +163,8 @@ class Model(object):
 		q = sql[0] + '=?,'.join(dk) + "=?"
 		q += " WHERE " + primary + "=?"
 		dv.append(self.m[primary])
+
+		print q
 
 		try:
 			c=flask.current_app.db.db.cursor(oursql.DictCursor)

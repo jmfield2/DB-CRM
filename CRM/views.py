@@ -85,8 +85,17 @@ def configure_views(app):
 		# sEcho, iTotalRecords, iTotalDisplayRecords
 
 		# sSearch?
+		if request.args.get("sSearch", False) is not False:
+			c = customers(Name__contains=request.args.get("sSearch"))
+		else: 
+			c = customers()
 
-		resp = {'aaData':[['type','name','user','date','status','actions']]}
+		data = []
+		for row in c:
+			owner = row.get_owner()['Username'] if row.get_owner() is not None else "N/A"
+			data.append([row['customer_type'], row['Name'], owner, str(row['date_created']), row['status'], "Edit | Delete"])
+
+		resp = {'aaData':data}
 
 		import json
 		return json.dumps(resp)

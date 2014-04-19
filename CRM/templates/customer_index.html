@@ -82,6 +82,7 @@ Customers
     $(document).ready(function() {
         $('#dataTables').dataTable({
 		"bProcessing":true,
+		/* "bServerSide":true, // means the server does all searching/processing */
 		"sAjaxSource":"{{ url_for('customer_search_json') }}"
 	});
     });
