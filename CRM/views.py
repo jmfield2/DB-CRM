@@ -90,10 +90,13 @@ def configure_views(app):
 		else: 
 			c = customers()
 
+		from flask import url_for
+
 		data = []
 		for row in c:
-			owner = row.get_owner()['Username'] if row.get_owner() is not None else "N/A"
-			data.append([row['customer_type'], row['Name'], owner, str(row['date_created']), row['status'], "Edit | Delete"])
+			owner = row.get_owner()['Username'] if row.get_owner() is not None else "N/A "
+			links = "<a href='%s'>Edit</a> | <a href='%s'>Delete</a>" % (url_for('customer_edit', id=int(row['ID'])), url_for('customer_delete', id=int(row['ID'])))
+			data.append([row['customer_type'], row['Name'], owner, str(row['date_created']), row['status'], links])
 
 		resp = {'aaData':data}
 
@@ -108,17 +111,13 @@ def configure_views(app):
 
 	# delete_confirm
 
-	# view
-	@app.route("/customers/view/<int:id>")
-	@auth_required()
-	def customer_view(id):
-		return ""
-
 	# edit
 	@app.route("/customers/edit/<int:id>", methods=['GET', 'POST'])
 	@auth_required()
 	def customer_edit(id):
-		return ""
+		u = user(user_id=session['uid']).get()
+
+                return render_template("customer_edit.html", user=u)
 
         @app.route("/customers/add", methods=['GET', 'POST'])
 	@auth_required()
