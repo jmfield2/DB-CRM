@@ -3,6 +3,9 @@ import oursql
 import flask
 
 
+_cached = {}
+
+
 # db models
 # Ideally, this class would be provided by a more established, production-ready framework like SQLAlchemy
 
@@ -10,10 +13,12 @@ class Model(object):
 	m = None
 	curs = None
 	changed = []
+	q = None
 
 	def __init__(self, *args, **kwargs):
 
 		app = flask.current_app
+		self.id = 1
 
 		d = []
 		sql = ["SELECT * FROM %s " % self.table]
@@ -43,10 +48,15 @@ class Model(object):
 		if len(sql) > 1: sql[0] += "WHERE "	
 		q = "%s%s" % (sql[0], ' AND '.join(sql[1:]))
 
+		self.q = q
+		self.d = d
+
+		if q in _cached: return 
+
 		print q
 
-                self.curs=app.db.db.cursor(oursql.DictCursor)
                 try:
+                	self.curs=app.db.db.cursor(oursql.DictCursor)
 	                self.curs.execute(q, d)
                 except Exception as e:
 			print str(e)
@@ -57,6 +67,7 @@ class Model(object):
 
 	def next(self): # Python < 3.x
 		self.m = None
+		self.id = self.id + 1
 		self.hydrate()
 			
 		if self.m is None: raise StopIteration
@@ -90,11 +101,29 @@ class Model(object):
 
 	def hydrate(self):
 		if self.m is not None: return
+
+		if self.q in _cached and self.id in _cached[self.q]: 
+			self.m = _cached[self.q][self.id]
+			return
+
 		try:
+			# No CACHE, but also no cursor...quickly execute cursor to fetch new row
+			if self.curs is None:
+				print "_cached execute: %s" % self.q	
+				self.curs=app.db.db.cursor(oursql.DictCursor)
+        	                self.curs.execute(self.q, self.d)
+
 			self.m = self.curs.fetchone()
+
+			if self.q in _cached: _cached[self.q][self.id] = dict(self.m)
+			else: _cached[self.q] = {self.id: dict(self.m)}
+
 			# XXX hydrate self.data 
 		except:
-			self.new() # so self.m is not None
+			# The cursor probably has no rows remaining, so hydrate self with empty dict
+
+			# Only set this to blank if we are not iterating
+			if self.m is not None: self.new() 
 
 		self.changed = []
 
