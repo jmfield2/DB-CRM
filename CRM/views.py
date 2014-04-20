@@ -70,7 +70,7 @@ def configure_views(app):
 	@auth_required()
 	def dashboard():
 		u = user(user_id=session['uid']).get()
-		del u['Password']
+		if 'Password' in u: del u['Password']
 
 		return render_template("index.html", user=u)
 
@@ -123,7 +123,7 @@ def configure_views(app):
 	@auth_required()
         def customer_add():
                 u = user(user_id=session['uid']).get()
-                del u['Password']
+                if 'Password' in u: del u['Password']
 
 		if 'customer_type' in request.form:
 			d = {"status":1, "owner_id":u['ID'], "customer_type":request.form.get('customer_type', False), "Name":request.form.get('Name', False), "date_created":datetime.datetime.now(), "date_modified":datetime.datetime.now()}
@@ -186,7 +186,7 @@ def configure_views(app):
 	@auth_required()
         def customer_index():
 		u = user(user_id=session['uid']).get()
-		del u['Password']
+		if 'Password' in u: del u['Password']
 
                 return render_template("customer_index.html", user=u)
 
