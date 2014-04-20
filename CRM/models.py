@@ -51,7 +51,7 @@ class Model(object):
 		self.q = q
 		self.d = d
 
-		if q in _cached: return 
+		if q+str(d) in _cached: return 
 
 		print q
 
@@ -102,8 +102,10 @@ class Model(object):
 	def hydrate(self):
 		if self.m is not None: return
 
-		if self.q in _cached and self.id in _cached[self.q]: 
-			self.m = _cached[self.q][self.id]
+		ckey = self.q + str(self.d)
+
+		if ckey in _cached and self.id in _cached[ckey]: 
+			self.m = _cached[ckey][self.id]
 			return
 
 		try:
@@ -115,8 +117,8 @@ class Model(object):
 
 			self.m = self.curs.fetchone()
 
-			if self.q in _cached: _cached[self.q][self.id] = dict(self.m)
-			else: _cached[self.q] = {self.id: dict(self.m)}
+			if ckey in _cached: _cached[ckey][self.id] = dict(self.m)
+			else: _cached[ckey] = {self.id: dict(self.m)}
 
 			# XXX hydrate self.data 
 		except:
