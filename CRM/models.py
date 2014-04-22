@@ -18,7 +18,7 @@ class Model(object):
 	def __init__(self, *args, **kwargs):
 
 		app = flask.current_app
-		self.id = 1
+		self.id = 0 
 
 		d = []
 		sql = ["SELECT * FROM %s " % self.table]
@@ -66,11 +66,12 @@ class Model(object):
 		return self
 
 	def next(self): # Python < 3.x
-		self.m = None
+
 		self.id = self.id + 1
+		self.m = None
 		self.hydrate()
 			
-		if self.m is None: raise StopIteration
+		if self.m is None and self.id > 1: raise StopIteration
 		return self
 
 	def __setitem__(self, key, val):
@@ -84,7 +85,7 @@ class Model(object):
 	def __getitem__(self, key):
 		self.hydrate()
 	
-		if key in self.m: return self.m[key]
+		if self.m is not None and key in self.m: return self.m[key]
 		else: return None
 
 	def __delitem__(self, key):
@@ -145,7 +146,23 @@ class Model(object):
 		return self
 
 	def delete(self):
-		return self	
+		if self.m is None: return
+
+		q = "DELETE FROM %s WHERE ID = ?" % self.table
+	
+		print "%s (%d)" % (q, self['ID'])
+
+		try:
+			c=flask.current_app.db.db.cursor(oursql.DictCursor)
+                        c.execute(q, [self['ID']])
+		except Exception as e:
+			flask.flash(str(e))
+			
+		return 
+
+	def invalidate_cache(self):
+		global _cached
+		_cached = {} # XXX big hammer
 
 	def insert(self):
 		d = {}
