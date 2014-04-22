@@ -59,7 +59,7 @@ CREATE TABLE `Appointments` (
   KEY `user_id` (`user_id`),
   CONSTRAINT `Appointments_ibfk_5` FOREIGN KEY (`service_id`) REFERENCES `Services` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `Appointments_ibfk_4` FOREIGN KEY (`user_id`) REFERENCES `Users` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -83,7 +83,7 @@ CREATE TABLE `Customers` (
   KEY `owner_id` (`owner_id`),
   CONSTRAINT `Customers_ibfk_8` FOREIGN KEY (`primary_contact_id`) REFERENCES `Customers_Contact` (`ID`) ON DELETE SET NULL ON UPDATE NO ACTION,
   CONSTRAINT `Customers_ibfk_7` FOREIGN KEY (`owner_id`) REFERENCES `Users` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -108,7 +108,7 @@ CREATE TABLE `Customers_Contact` (
   KEY `created_by` (`created_by`),
   CONSTRAINT `Customers_Contact_ibfk_4` FOREIGN KEY (`created_by`) REFERENCES `Users` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `Customers_Contact_ibfk_3` FOREIGN KEY (`customer_id`) REFERENCES `Customers` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=79 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -123,7 +123,7 @@ CREATE TABLE `Quotes` (
   `service_id` int(11) DEFAULT NULL,
   `quote_type` varchar(255) NOT NULL,
   `amount` float NOT NULL,
-  `paid` float NOT NULL,
+  `paid` float NOT NULL DEFAULT '0',
   `owner_id` int(11) NOT NULL,
   `date_created` datetime NOT NULL,
   `date_modified` datetime NOT NULL,
@@ -133,7 +133,7 @@ CREATE TABLE `Quotes` (
   KEY `owner_id` (`owner_id`),
   CONSTRAINT `Quotes_ibfk_5` FOREIGN KEY (`service_id`) REFERENCES `Services` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `Quotes_ibfk_4` FOREIGN KEY (`owner_id`) REFERENCES `Users` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -148,7 +148,7 @@ CREATE TABLE `Services` (
   `customer_id` int(11) NOT NULL,
   `Name` varchar(255) NOT NULL,
   `service_type` varchar(255) NOT NULL,
-  `description` text NOT NULL,
+  `description` text,
   `owner_id` int(11) NOT NULL,
   `date_created` datetime NOT NULL,
   `date_modified` datetime NOT NULL,
@@ -156,9 +156,9 @@ CREATE TABLE `Services` (
   PRIMARY KEY (`ID`),
   KEY `customer_id` (`customer_id`),
   KEY `owner_id` (`owner_id`),
-  CONSTRAINT `Services_ibfk_4` FOREIGN KEY (`owner_id`) REFERENCES `Users` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `Services_ibfk_3` FOREIGN KEY (`customer_id`) REFERENCES `Customers` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+  CONSTRAINT `Services_ibfk_3` FOREIGN KEY (`customer_id`) REFERENCES `Customers` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `Services_ibfk_4` FOREIGN KEY (`owner_id`) REFERENCES `Users` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -189,4 +189,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-04-22  3:13:27
+-- Dump completed on 2014-04-22 18:21:24
