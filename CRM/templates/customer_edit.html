@@ -1,0 +1,246 @@
+{% extends "layout/base.html" %}
+
+{% block title %}
+Edit Customer {{ super() }}
+{% endblock %}
+
+{% block css %}
+{{ super() }}
+    <link href="/static/css/dataTables.bootstrap.css" rel="stylesheet">
+    <link href="/static/css/bootstrap-datetimepicker.min.css" media="screen" type="text/css" rel="stylesheet"></link>
+{% endblock %}
+
+{% block body %}
+
+        <div id="page-wrapper">
+             <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Edit Customer <!-- Dashboard --></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+                {% for message in messages %}
+                        {{ message }}
+                {% endfor %}
+        {% endif %}
+        {% endwith %}
+		    
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4>Customer Information:</h4> 
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <form class="form-horizontal" method=POST action="{{ url_for('customer_edit', id=customer['ID']) }}">
+
+                                <div class = "form-group">
+                                    <label for="contact-type" class="col-lg-3">Type</label>
+                                    <div class="col-lg-6">
+                                        <input type="text" class="form-control" name='customer_type' id="contact-type" placeholder="ex: Company" value="{{ customer['customer_type'] }}" >
+                                        <p class="help-block"></p>
+                                    </div>
+                                </div>
+                                <div class = "form-group">
+                                    <label for="contact-name" class="col-lg-3">Name</label>
+                                    <div class="col-lg-6">
+                                        <input type="text" class="form-control" name='Name' id="contact-name" placeholder="ex: John Smith" value="{{ customer['Name'] }}" >
+                                        <p class="help-block"></p>
+                                    </div>
+                                </div>
+
+				
+				<!-- Customers_Contact details -->
+
+				<div class="form-group">
+                                    <label for="contact-detail-type" class="col-lg-3">Primary Contact Type</label>
+                                    <div class="col-lg-6">
+                                        <input type="text" class="form-control" name='contact_type' id="contact-detail-type" placeholder="ex: main" value="{{ c.get_primary_contact()["contact_type"] }}" >
+                                    </div>
+				</div>
+
+				{% for row in customer_contact(customer_id=customer['ID'], contact_type=c.get_primary_contact()["contact_type"]) %}
+
+	                                <div class="form-group">
+					    <div class="col-lg-3">
+						<input type=text class="form-control" name="contact-name-{{ row['ID'] }}" value="{{ row['name']|capitalize }}">
+					    </div>
+                	                    <div class="col-lg-6"> 
+                        	                <input type="text" class="form-control" name='contact-{{ row['ID'] }}' id="contact-{{ row['ID'] }}" value="{{ row['data'] }}" >
+                                	    </div>
+	                                </div>
+
+				{% endfor %}
+
+				<div class='form-group' id="addContactDetail" >
+					<div class="col-lg-6">
+					<button onclick="addContactDetails()" type="button" class="btn btn-sm btn-success">Add New Contact Detail</button>
+					</div>
+				</div>
+
+				<!-- Additional Contact Detail Types XXX -->
+
+				<hr>
+
+				<h3>Services</h3>
+
+				{% for row in c.get_services() %}
+					{{ row }}	
+
+					{% for quote in row.get_quotes() %}
+						{{ quote }}
+					{% endfor %}
+
+					{% for appt in row.get_appointments() %}
+						{{ appt }}
+					{% endfor %}
+				{% endfor %}
+
+				<!-- http://getbootstrap.com/2.3.2/javascript.html#typeahead -->
+
+                                <div class="accordion" id="accordion2">
+                                    <div class="accordion-group">
+                                        <div class="accordion-heading">
+                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne"><button type="button" class="btn btn-sm btn-success"><!-- <i class="glyphicon glyphicon-plus"></i> -->Add Service</button></a>
+                                        </div>
+                                        <br>
+                                        <div id="collapseOne" class="accordion-body collapse out">
+                                            <div class="form-group">
+                                                <label for="contact-state" class="col-lg-12">Service Type</label>
+
+                                                <div class="col-lg-4 col-lg-offset-3">
+                                                    <label>
+                                                        <input type="radio" value="Maintenance" name="service-type">
+                                                        Maintenance
+                                                    </label>
+                                                </div>
+                                                <div class="col-lg-5">
+                                                    <label>
+                                                        <input type="radio" value="Repair" name="service-type">
+                                                        Repair
+                                                    </label>
+                                                </div>
+                                                <div class="col-lg-4 col-lg-offset-3">
+                                                    <label>
+                                                        <input type="radio" value="Service Call" name="service-type">
+                                                        Service Call
+                                                    </label>
+                                                </div>
+                                                <div class="col-lg-5">
+                                                    <label>
+                                                        <input type="radio" value="Other" name="service-type">
+                                                        Other
+                                                    </label>
+                                                </div>
+                                                <label for="contact-state" class="col-lg-3">If other:</label>
+                                                <div class="col-lg-6">
+                                                    <input id="service-other-type" name="service-other-type" type="text" placeholder="Service Type" class="form-control">
+                                                </div>
+                                            </div>
+
+						
+					    <div class="form-group">
+						<label for='service-name' class="col-lg-3">Name of Service</label>
+						<div class="col-lg-6">
+							<input id="service-name" name="service-name" type=text placeholder="Service Name" class="form-control">
+						</div>
+					    </div>
+
+                                            <div class="form-group">
+                                                <label for="contact-state" class="col-lg-3">Description of Service</label>
+                                                <div class="col-lg-6">
+                                                    <textarea name="service-description" class="form-control" rows="3" placeholder="Please enter detail decription of problem here..."></textarea>
+                                                </div>
+                                            </div>
+
+
+					    <div class="form-group">
+						<label for="quote-date" class="col-lg-3">Quote Type:</label>
+						<div class="col-lg-6">
+							<input name="quote-type" type=text/>
+						</div>
+					    </div>
+                                            <div class="form-group">
+                                                <label for="quote-amount" class="col-lg-3">Quote Amount:</label>
+                                                <div class="col-lg-6">
+						    <input type=text name="quote-amount" class="form-control" placeholder="ex: $0.00">
+                                                </div>
+                                            </div>
+
+
+					    <div class="form-group">
+						<label for='contact-quote-user' class='col-lg-3'>Appointment User:</label>
+						<div class="col-lg-6">
+							<input type=text id="contact-quote-user" name="contact-quote-user" placeholder="User ID" />
+						</div>
+					    </div>
+
+                                            <div class="form-group">
+                                                <label for="contact-price" class="col-lg-3">Appointment Time:</label>
+                                                <div class="col-lg-6">
+                                                    <div class="datetimepicker2" class="input-append">   
+                                                        <input name="appointment-date" data-format="yyyy-MM-dd hh:mm:ss" type="text"></input>
+                                                        <span class="add-on">
+                                                            <i data-time-icon="glyphicon glyphicon-time" data-date-icon="glyphicon glyphicon-calendar"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                                                 
+                                        </div>
+                                    </div>
+                                </div>
+
+                        <!-- </div> -->
+                                <div class="form-footer">
+                                    <!-- <button type="button" class="btn btn-default btn-sm ng-scope" data-dismiss="modal">Clear</button> -->
+                                    <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-save"></i>Save changes</button>
+                                </div>
+                            </form>
+                        </div>   
+                    </div>
+                </div>
+            <!-- /.modal-content -->
+            </div>
+        <!-- /.modal-dialog -->
+        </div>
+
+	<div id="contactDetail_form" style="display:none">
+
+		<div class="form-group">
+                        <div class="col-lg-3">
+                        <input type=text class="form-control" name="contact-name-new" placeholder="ex: Email" >
+                        </div>
+                        <div class="col-lg-6">
+                        <input type="text" class="form-control" name='contact-new' placeholder="ex: email@address.com" >
+                	</div>
+                </div>
+
+	</div>
+
+{% endblock %}
+
+{% block javascript %}
+{{ super() }}
+
+    <script src="/static/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+	function addContactDetails() {
+		obj = $('#contactDetail_form').html();
+		$(obj).insertBefore("#addContactDetail");
+	}
+        $(function() {
+            $('.datetimepicker2').datetimepicker({
+                language: 'en',
+                pick12HourFormat: true
+            });
+        });
+    </script>
+
+{% endblock %}
+    
