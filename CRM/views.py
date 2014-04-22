@@ -228,5 +228,19 @@ def configure_views(app):
         def userprofile():
                 return render_template("userprofile.html")
 
+	@app.route("/users/search.json")
+	@auth_required()
+	def user_search_json():
+		q = request.args.get("q", False)
+
+		resp = []
+		if q is not False:
+			u = user(Name__contains=q)
+			for row in u:
+				resp.append({'value': row["ID"], "user":row['Username']})
+
+		import json
+		return json.dumps(resp)
+
 	# Access
 

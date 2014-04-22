@@ -231,13 +231,13 @@ class user(Model):
 	data = {"ID":'', "Username":"", "Password":"", "date_created":"", "date_modified":"", "status":"", "Company":""}
 	table = "Users"
 
-	def __init__(self, user_id=None, email=None):
+	def __init__(self, user_id=None, email=None, **kwargs):
 		if user_id is not None:
 			super(user, self).__init__(ID=user_id, status=1)
 		elif email is not None:
 			super(user, self).__init__(email=email, status=1)
 		else:
-			super()
+			super(user, self).__init__(kwargs)
 
 	def get_customers(self):
 		return customer(owner_id=self['ID'])

@@ -176,7 +176,7 @@ Edit Customer {{ super() }}
 					    <div class="form-group">
 						<label for='contact-quote-user' class='col-lg-3'>Appointment User:</label>
 						<div class="col-lg-6">
-							<input type=text id="contact-quote-user" name="contact-quote-user" placeholder="User ID" />
+							<input type=text autocomplete="off" id="contact-quote-user" name="contact-quote-user" placeholder="User ID" />
 						</div>
 					    </div>
 
@@ -229,16 +229,35 @@ Edit Customer {{ super() }}
 {{ super() }}
 
     <script src="/static/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+    <script src="/static/js/typeahead.bundle.min.js" type="text/javascript"></script>
+    <script src="/static/js/handlebars.js" type="text/javascript"></script>
+
     <script type="text/javascript">
 	function addContactDetails() {
 		obj = $('#contactDetail_form').html();
 		$(obj).insertBefore("#addContactDetail");
 	}
+
         $(function() {
             $('.datetimepicker2').datetimepicker({
                 language: 'en',
                 pick12HourFormat: true
             });
+
+
+	    var users = new Bloodhound({
+		  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+		  queryTokenizer: Bloodhound.tokenizers.whitespace,
+		  remote: '/users/search.json?q=%QUERY'
+	    });
+ 
+	    users.initialize();
+
+	    $("#contact-quote-user").typeahead(null, {name: "user", displayKey:function(val) {
+		return val.value;
+		}, templates:{
+		"suggestion": Handlebars.compile("<p>{% raw %}{{user}}{% endraw %}</p>")
+		}, source: users.ttAdapter()});
         });
     </script>
 
