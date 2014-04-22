@@ -150,8 +150,6 @@ def configure_views(app):
 
 		if len(request.form) > 0:
 
-			flash(request.form)
-
 			# edit customer
                         d = {"customer_type":request.form.get('customer_type', c['customer_type']), "Name":request.form.get('Name', c['Name'])}
 			c.set_dict(d)
@@ -164,7 +162,7 @@ def configure_views(app):
 			import copy
 			type = request.form.get('contact_type', False)
 
-			if c.get_primary_contact() is not None:
+			if c.get_primary_contact().get() is not None:
 				ct = customer_contact(customer_id=c['ID'], contact_type=c.get_primary_contact()["contact_type"])
 				for row in ct:
 					tmp = copy.copy(row)
@@ -192,7 +190,8 @@ def configure_views(app):
 				ct["date_modified"] = datetime.datetime.now()
 
 				retid = ct.insert()
-				if retid is not False and c.get_primary_contact() is None:
+
+				if retid is not False and c.get_primary_contact().get() is None:
 					c['primary_contact_id'] = retid
 					c.update()
 
