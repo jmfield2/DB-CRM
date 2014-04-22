@@ -1,93 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<!--  -->
-	<title> Company Heading - Tampa, FL </title>
-    <meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<!-- 	<link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="static/css/styles.css"> -->
-	<!-- Core CSS - Include with every page -->
-    <link href="static/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Page-Level Plugin CSS - Dashboard -->
-    <!-- <link href="static/css/font-awesome.css" rel="stylesheet"> -->
-    <link href="static/css/dataTables.bootstrap.css" rel="stylesheet">
-    <!-- SB Admin CSS - Include with every page -->
-    <link href="static/css/sb-admin.css" rel="stylesheet">
-</head>
-<body>
-	<div id="wrapper">
+{% extends "layout/base.html" %}
 
-        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="index.html">Company Name</a>
-            </div>
-            <!-- /.navbar-header -->
+{% block title %}
+User Settings {{ super() }}
+{% endblock %}
 
-            <ul class="nav navbar-top-links navbar-right">
-                <!-- /.dropdown -->
-
-                <li class="dropdown user-dropdown pull-right">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Welcome: 
-                        <i class="glyphicon glyphicon-user"></i> John Smith <i class="glyphicon glyphicon-collapse-down"></i>
-                    </a>
-                    <ul class="dropdown-menu dropdown-user">
-                        <li><a href="userprofile.html"><i class="glyphicon glyphicon-user"></i> User Profile</a>
-                        </li>
-                        <li><a href="#"><i class="glyphicon glyphicon-cog"></i> Settings</a>
-                        </li>
-                        </li>
-                        <li><a href="#"><i class="glyphicon glyphicon-question-sign"></i> Help </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li><a href="login.html"><i class="glyphicon glyphicon-log-out"></i> Logout</a>
-                        </li>
-                    </ul>
-                    <!-- /.dropdown-user -->
-                </li>
-                <!-- /.dropdown -->
-            </ul>
-            <!-- /.navbar-top-links -->
-
-        </nav>
-        <!-- /.navbar-static-top -->
-
-        <nav class="navbar-default navbar-static-side" role="navigation">
-            <div class="sidebar-collapse">
-                <ul class="nav" id="side-menu">
-                    <li>
-                        <a href="index.html"><i class="glyphicon glyphicon-tasks"></i> Tasks </a>
-                    </li>
-                    <li>
-                        <a href="dashboard.html"><i class="glyphicon glyphicon-search"></i> Search Customer </a>
-                    </li>
-                    <li>
-                        <a href="addcustomer.html"><i class="glyphicon glyphicon-plus"></i> Add New Customer </a>
-                    </li>
-                </ul>
-                <!-- /#side-menu -->
-            </div>
-            <!-- /.sidebar-collapse -->
-        </nav>
-        <!-- /.navbar-static-side -->
+ {% block body %}
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header"><i></i>Profile<!-- Dashboard --></h1>
-                </div>
-                <!-- /.col-lg-12 -->
-            </div>
-            <div class="row">
-                <div class="col-lg-12">
+		    <br>
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h4>My Profile</h4>
+                            <h4>Settings</h4>
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
@@ -137,17 +61,18 @@
         </div>
         <!-- /#page-wrapper -->
     </div>
-    <!-- /#wrapper -->
+
+
     <div class="modal fade" id="editProfile" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form> 
+                <form>
                     <div class="modal-header">
                         <h4>Edit Profile</h4>
                     </div>
                     <div class="modal-body">
                         <div class = "form-group">
-                                    <!-- <h5 class="contact-title">Customer Name</h5> -->
+
                             <label for="contact-name" class="col-md-3">First Name</label>
                             <div class="col-md-9">
                                     <input type="text" class="form-control" id="contact-name" placeholder="ex: John">
@@ -163,19 +88,19 @@
                         </div>
                         <div class="form-group">
                             <label for="contact-email" class="col-md-3">Email</label>
-                            <div class="col-md-9"> 
-                                <input type="email" class="form-control" id="contact-email" placeholder="ex: myname@example.com">
+                            <div class="col-md-9">
+                                <input type="email" class="form-control" id="contact-email" placeholder="ex: myname@example.com" >
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="contact-phone" class="col-md-3">Phone Number</label>
-                            <div class="col-md-9"> 
+                            <div class="col-md-9">
                                 <input type="text" class="form-control" id="contact-phone" placeholder="ex: (813)999-9999">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="contact-fax" class="col-md-3">Phone Number</label>
-                            <div class="col-md-9"> 
+                            <div class="col-md-9">
                                 <input type="text" class="form-control" id="contact-fax" placeholder="ex: (813)999-9999">
                             </div>
                         </div>
@@ -187,17 +112,12 @@
                </form>
             </div>
         </div>
-    </div>
+    </div> 
 
-    <!-- Core Scripts - Include with every page -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-	<script type="text/javascript" src="static/js/bootstrap.min.js"></script>
-    <script src="static/js/jquery.metisMenu.js"></script>>
-    <!-- SB Admin Scripts - Include with every page -->
-    <script src="static/js/sb-admin.js"></script>
+{% endblock %}
 
-</body>
-
-</html>
-
+{% block javascript %}
+{{ super() }}
+    <script src="/static/js/jquery.metisMenu.js"></script>>
+{% endblock %}
 

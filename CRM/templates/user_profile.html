@@ -1,0 +1,123 @@
+{% extends "layout/base.html" %}
+
+{% block title %}
+User Profile {{ super() }}
+{% endblock %}
+
+ {% block body %}
+        <div id="page-wrapper">
+            <div class="row">
+		<br>
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4>My Profile</h4>
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <!-- <div class="col-md-3">
+                                <img src="http://placehold.it/380x500" alt="avatar" class="avatar img-circle"height="150" width="150"/>
+                            </div> -->
+                            <!-- <div class="col-md-9">
+ -->                            <div class="row">
+                                    <div class="col-md-6">
+                                        <h4>Personal Information:</h4>
+                                        <dl class="dl-horizontal">
+                                            <dt>First Name: </dt>
+                                            <dd>John</dd>
+                                            <dt>Last Name: </dt>
+                                            <dd>Smith</dd>
+                                            <dt>Email Address: </dt>
+                                            <dd>john.smith@example.com</dd>
+                                            <dt>Phone Number: </dt>
+                                            <dd>+1(813)999-9999</dd>
+                                            <dt>Fax Number: </dt>
+                                            <dd>+1(813)999-9999</dd>
+                                        </dl>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h4>Employee Information:</h4>
+                                        <dl class="dl-horizontal">
+                                            <dt>Employee ID: </dt>
+                                            <dd>12345</dd>
+                                            <dt>Position: </dt>
+                                            <dd>Marketing Officer</dd>
+                                            <dt>Department: </dt>
+                                            <dd>Marketing</dd>
+                                            <dt>Supervison: </dt>
+                                            <dd><a href="#">Mark Smith</a></dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            <!-- </div> -->
+                        </div>
+                        <div class="panel-body">
+                            <a class="btn btn-info" href="#editProfile" data-toggle="modal"><i class="glyphicon glyphicon-pencil"></i> Edit profile</a>
+                        </div>   
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- /#page-wrapper -->
+    </div>
+
+
+    <div class="modal fade" id="editProfile" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form>
+                    <div class="modal-header">
+                        <h4>Edit Profile</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class = "form-group">
+
+                            <label for="contact-name" class="col-md-3">First Name</label>
+                            <div class="col-md-9">
+                                    <input type="text" class="form-control" id="contact-name" placeholder="ex: John">
+                                <p class="help-block"></p>
+                            </div>
+                        </div>
+                        <div class = "form-group">
+                            <label for="contact-name" class="col-md-3">Last Name</label>
+                            <div class="col-md-9">
+                                <input type="text" class="form-control" id="contact-name" placeholder="ex: Smith">
+                                <p class="help-block"></p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-email" class="col-md-3">Email</label>
+                            <div class="col-md-9">
+                                <input type="email" class="form-control" id="contact-email" placeholder="ex: myname@example.com" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-phone" class="col-md-3">Phone Number</label>
+                            <div class="col-md-9">
+                                <input type="text" class="form-control" id="contact-phone" placeholder="ex: (813)999-9999">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-fax" class="col-md-3">Phone Number</label>
+                            <div class="col-md-9">
+                                <input type="text" class="form-control" id="contact-fax" placeholder="ex: (813)999-9999">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-default" href="#closeProfileModal" data-dismiss="modal">Close</a>
+                        <a class="btn btn-primary" href="#saveProfile"><i class="glyphicon glyphicon-save"></i>Save</a>
+                    </div>
+               </form>
+            </div>
+        </div>
+    </div> 
+
+{% endblock %}
+
+{% block javascript %}
+{{ super() }}
+    <script src="/static/js/jquery.metisMenu.js"></script>>
+{% endblock %}
+

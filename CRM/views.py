@@ -62,6 +62,9 @@ def configure_views(app):
 		
                 return render_template("login.html", url=request.url)
 
+	@app.route("/help")
+	def help():
+		return render_template("help.html")
 
 	# the remaining views below require authentication
 
@@ -223,10 +226,13 @@ def configure_views(app):
 
 	# Users
 
-        @app.route("/userprofile.html")
+        @app.route("/user/profile", methods=['GET','POST'])
 	@auth_required()
-        def userprofile():
-                return render_template("userprofile.html")
+        def user_profile():
+		u = user(user_id=session['uid']).get()
+		if 'Password' in u: del u['Password']
+
+                return render_template("user_profile.html", user=u)
 
 	@app.route("/users/search.json")
 	@auth_required()
@@ -241,6 +247,14 @@ def configure_views(app):
 
 		import json
 		return json.dumps(resp)
+
+	@app.route("/users/settings")
+	@auth_required()
+	def user_settings():
+		u = user(user_id=session['uid']).get()
+                if 'Password' in u: del u['Password']
+		
+		return render_template("user_settings.html", user=u)
 
 	# Access
 

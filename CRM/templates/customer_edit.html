@@ -29,7 +29,9 @@ Edit Customer {{ super() }}
                 {% endfor %}
         {% endif %}
         {% endwith %}
-		    
+		   
+ 
+                    <form class="form-horizontal" method=POST action="{{ url_for('customer_edit', id=customer['ID']) }}">
 
                     <div class="panel panel-default">
                         <div class="panel-heading">
@@ -37,7 +39,6 @@ Edit Customer {{ super() }}
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
-                            <form class="form-horizontal" method=POST action="{{ url_for('customer_edit', id=customer['ID']) }}">
 
                                 <div class = "form-group">
                                     <label for="contact-type" class="col-lg-3">Type</label>
@@ -85,20 +86,76 @@ Edit Customer {{ super() }}
 
 				<!-- Additional Contact Detail Types XXX -->
 
-				<hr>
+			</div> <!-- panel-body -->
+ 			</div> <!-- panel -->
 
-				<h3>Services</h3>
+                        <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4>Services:</h4>
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
 
 				{% for row in c.get_services() %}
-					{{ row }}	
+					
+					<div class="form-group">	
+                                        <label class="col-lg-3">Service Type</label>
+					<div class="col-lg-6">
+					<input class="form-control" type=text name="service-{{ row['ID'] }}-service_type" value="{{ row['service_type'] }}" />
+					</div>
+					</div>
+
+					<div class="form-group">
+                                        <label class="col-lg-3">Service Name</label>
+                                        <div class="col-lg-6">
+                                        <input class="form-control" type=text name="service-{{ row['ID'] }}-Name" value="{{ row['Name'] }}" />
+                                        </div>
+					</div>
+
+					<div class="form-group">
+                                        <label class="col-lg-3">Created By</label>
+                                        <div class="col-lg-6">
+					User #{{ row['owner_id'] }}
+                                        </div>
+					</div>
+
+					<div class="form-group">
+                                        <label class="col-lg-3">Service Status</label>
+                                        <div class="col-lg-6">
+                                        <input class="form-control" type=text name="service-{{ row['ID'] }}-status" value="{{ row['status'] }}" />
+                                        </div>
+					</div>
+		
+					<div class="form-group">
+                                        <label class="col-lg-3">Service Description</label>
+                                        <div class="col-lg-6">
+                                        <textarea class="form-control" rows=3 name="service-{{ row['ID'] }}-description">{{ row['description'] }}</textarea>
+
+                                        </div>
+					</div>
+
 
 					{% for quote in row.get_quotes() %}
+						Status, Paid, Amount, quote_type, Assigned To
+	
 						{{ quote }}
 					{% endfor %}
 
 					{% for appt in row.get_appointments() %}
+						Scheduled, Actual Arrival, Assigned to, Extra, Status
+
 						{{ appt }}
 					{% endfor %}
+
+		
+					<div class="form-group">	
+					<div class="col-lg-3">
+					<button type="button" onclick="" class="btn btn-sm btn-success">New Quote</button>
+					<button type="button" onclick="" class="btn btn-sm btn-success">New Appointment</button>
+					</div></div>
+
+					<hr>
+
 				{% endfor %}
 
 				<!-- http://getbootstrap.com/2.3.2/javascript.html#typeahead -->
@@ -196,14 +253,16 @@ Edit Customer {{ super() }}
                                     </div>
                                 </div>
 
-                        <!-- </div> -->
+			</div></div>
+
                                 <div class="form-footer">
                                     <!-- <button type="button" class="btn btn-default btn-sm ng-scope" data-dismiss="modal">Clear</button> -->
                                     <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-save"></i>Save changes</button>
                                 </div>
+
+
                             </form>
-                        </div>   
-                    </div>
+
                 </div>
             <!-- /.modal-content -->
             </div>
