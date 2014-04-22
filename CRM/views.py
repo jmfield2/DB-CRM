@@ -148,7 +148,145 @@ def configure_views(app):
 
 		c = customers(ID=id)
 
-		flash( str(request.form) )
+		if len(request.form) > 0:
+
+			flash(request.form)
+
+			# edit customer
+                        d = {"customer_type":request.form.get('customer_type', c['customer_type']), "Name":request.form.get('Name', c['Name'])}
+			c.set_dict(d)
+			if c.is_changed(): 	
+				d["date_modified"] = datetime.datetime.now()
+				c.set_dict(d)
+				c.update()
+
+			# edit customer_contacts
+			import copy
+			type = request.form.get('contact_type', False)
+
+			if c.get_primary_contact() is not None:
+				ct = customer_contact(customer_id=c['ID'], contact_type=c.get_primary_contact()["contact_type"])
+				for row in ct:
+					tmp = copy.copy(row)
+					tmp["name"] = request.form.get("contact-name-" + str(row["ID"]), tmp["name"])
+					tmp["data"] = request.form.get("contact-" + str(row["ID"]), tmp["data"])
+					tmp["contact_type"] = type
+					if tmp.is_changed(): 
+						tmp["date_modified"] = datetime.datetime.now()
+						tmp.update()
+						flash("Customer updated")
+
+                        names = request.form.getlist("contact-name-new")
+                        values = request.form.getlist("contact-new")
+
+			for i in range(0, len(names)):
+				if len(names[i]) <= 0 or len(values[i]) <= 0: continue
+
+				ct = customer_contact().new()
+				ct["customer_id"] = c["ID"]
+				ct["created_by"] = session['uid']
+				ct["contact_type"] = type
+				ct["name"] = names[i]
+				ct["data"] = values[i]
+				ct["date_created"] = datetime.datetime.now()
+				ct["date_modified"] = datetime.datetime.now()
+
+				retid = ct.insert()
+				if retid is not False and c.get_primary_contact() is None:
+					c['primary_contact_id'] = retid
+					c.update()
+
+			# edit services
+			for row in c.get_services():
+				tmp = copy.copy(row)
+				tmp["status"] = request.form.get("service-%d-status" % tmp["ID"], tmp["status"])
+				tmp["service_type"] = request.form.get("service-%d-service_type" % tmp["ID"], tmp["service_type"])
+				tmp["Name"] = request.form.get("service-%d-Name" % tmp["ID"], tmp["Name"])
+				tmp["description"] = request.form.get("service-%d-description" % tmp["ID"], tmp["description"])
+				if tmp.is_changed():
+			 		tmp["date_modified"] = datetime.datetime.now()
+					tmp.update()
+					flash("Service updated")
+
+				# edit quotes
+				for s in row.get_quotes():
+					tmp = copy.copy(s)
+					tmp["quote_type"] = request.form.get("quote-%d-type" % tmp["ID"], tmp["quote_type"])
+					tmp["amount"] = request.form.get("quote-%d-amount" % tmp["ID"], tmp["amount"])
+					tmp["paid"] = request.form.get("quote-%d-paid" % tmp["ID"], tmp["paid"])
+					tmp["status"] = request.form.get("quote-%d-status" % tmp["ID"], tmp["status"])
+					tmp["owner_id"] = request.form.get("quote-%d-owner_id" % tmp["ID"], tmp["owner_id"])
+					if tmp.is_changed():
+						tmp["date_modified"] = datetime.datetime.now()
+						tmp.update()
+						flash("Quote updated")
+
+				# edit appointments
+				for s in row.get_appointments():
+					tmp = copy.copy(s)
+					tmp['user_id'] = request.form.get("appt-%d-user_id" % tmp["ID"], tmp["user_id"])
+					tmp["scheduled"] = request.form.get("appt-%d-scheduled" % tmp["ID"], tmp["scheduled"])
+					tmp["actual"] = request.form.get("appt-%d-actual" % tmp["ID"], tmp["actual"])
+					tmp["extra"] = request.form.get("appt-%d-extra" % tmp["ID"], tmp["extra"])
+					tmp["status"] = request.form.get("appt-%d-status" % tmp["ID"], tmp["status"])
+					if tmp.is_changed():
+						tmp["date_modified"] = datetime.datetime.now()
+						tmp.update()
+						flash("Appointment updated")
+
+				# new quotes
+				s = request.form.get("quote-new-%d-status" % row["ID"], False)
+				if s is not False and len(s) > 0: 
+					tmp = quotes().new()
+					tmp["service_id"] = row["ID"]
+					tmp["owner_id"] = request.form.get("quote-new-%d-owner_id" % row["ID"], False)
+					tmp["quote_type"] = request.form.get("quote-new-%d-type" % row["ID"], False)
+					tmp["amount"] = request.form.get("quote-new-%d-amount" % row["ID"], False)
+					tmp["paid"] = request.form.get("quote-new-%d-paid" % row["ID"], False)
+					tmp["status"] = request.form.get("quote-new-%d-status" % row["ID"], False)
+					tmp["date_created"] = datetime.datetime.now()
+					tmp["date_modified"] = datetime.datetime.now()
+					tmp.insert()
+
+					flash("Quote added")
+
+				# new appointments
+				s = request.form.get("appt-new-%d-status" % row["ID"], False)
+				if s is not False and len(s) > 0:
+					tmp = appointments().new()
+					tmp["service_id"] = row["ID"]
+					tmp["user_id"] = request.form.get("appt-new-%d-user_id" % row["ID"], False)
+					tmp["status"] = request.form.get("appt-new-%d-status" % row["ID"], False)
+					tmp["extra"] = request.form.get("appt-new-%d-extra" % row["ID"], False)
+					tmp["actual"] = request.form.get("appt-new-%d-actual" % row["ID"], False)
+					tmp["scheduled"] = request.form.get("appt-new-%d-scheduled" % row["ID"], False)
+					tmp["date_created"] = datetime.datetime.now()
+					tmp["date_modified"] = datetime.datetime.now()
+					tmp.insert()
+					flash("Appointment added")
+	
+			# new service
+                        # services customer_id Name service_type description owner_id status
+                        if id is not False and request.form.get('service-type', False) is not False:
+                                d = {"customer_id":c["ID"], "Name":request.form.get("service-name"), "description":request.form.get("service-description"), "service_type":request.form.get("service-type"), "owner_id":session['uid'], "status":1, "date_created":datetime.datetime.now(), "date_modified":datetime.datetime.now()}
+                                if d["service_type"] == "Other": d["service_type"] = request.form.get("service-other-type", "")
+                                s = services().set_dict(d).insert()
+
+                                # quotes service_id, quote_type amount owner_id status
+                                d = {"service_id":s, "quote_type":request.form.get("quote-type"), "amount":request.form.get("quote-amount"), "owner_id":session['uid'], "status":1, "paid":0, "date_created":datetime.datetime.now(), "date_modified":datetime.datetime.now()}
+                                quotes().set_dict(d).insert()
+
+                                # appointments service_id user_id scheduled extra status
+                                d = {"service_id":s, "user_id":request.form.get('contact-quote-user'), "scheduled":request.form.get("appointment-date"), "extra":"-", "status":1, "actual":"0000-00-00", "date_created":datetime.datetime.now(), "date_modified":datetime.datetime.now()}
+                                appointments().set_dict(d).insert()
+
+                                flash("Service Added (ID=%d)" % s)
+
+			# reload
+			c.invalidate_cache()
+			c = customers(ID=id) 
+
+			flash( "Customer Updated. (%s) " % request.form )
 
                 return render_template("customer_edit.html", user=u, c=c, customer=c.get(), customer_contact=customer_contact)
 
@@ -223,6 +361,19 @@ def configure_views(app):
 
                 return render_template("customer_index.html", user=u)
 
+
+	@app.route("/services/delete/<int:id>")
+	@auth_required()
+	def services_delete(id):
+		next = request.referrer
+
+		s = services(ID=id)
+		s.delete()
+		flash("Service Deleted")
+		
+		s.invalidate_cache()
+
+		return redirect(next)
 
 	# Users
 

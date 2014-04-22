@@ -15,6 +15,9 @@ class Model(object):
 	changed = []
 	q = None
 
+	def is_changed(self):
+		return len(self.changed) > 0
+
 	def __init__(self, *args, **kwargs):
 
 		app = flask.current_app
@@ -78,7 +81,8 @@ class Model(object):
 
 		self.hydrate()
 
-		if key in self.m: 
+		if key in self.m:
+			if val == self.m[key]: return 
 			self.m[key] = val
 			self.changed.append(key)
 
@@ -127,6 +131,7 @@ class Model(object):
 
 			# Only set this to blank if we are not iterating
 			if self.m is not None: self.new() 
+			elif self.id == 1: self.id = 2 # hack to raise stopiteration from next() on first
 
 		self.changed = []
 
@@ -140,12 +145,15 @@ class Model(object):
 		return self
 
 	def set_dict(self, d):
-		self.new() # OK? XXX
+		if self.m is None: self.new() # OK? XXX
 		for key in d:
-			if key in self.m: self.m[key] = d[key]
+			if key in self.m: 
+				self.m[key] = d[key]
+				self.changed.append(key)
 		return self
 
 	def delete(self):
+		self.hydrate()
 		if self.m is None: return
 
 		q = "DELETE FROM %s WHERE ID = ?" % self.table
@@ -177,7 +185,7 @@ class Model(object):
 		q = sql[0] + "(" + ','.join(d.keys()) + ")"
 		q += " VALUES (" + ','.join(sql[1:]) + ")"
 
-		print q
+		print "%s (%s)" % (q, str(d))
 
 		ret = False
 		try:
@@ -194,6 +202,7 @@ class Model(object):
 		return ret		
 
 	def update(self):
+
 		dk = []
 		dv = []
 		primary = "ID" if not hasattr(self, 'primary') else self.primary
@@ -212,13 +221,14 @@ class Model(object):
 		q += " WHERE " + primary + "=?"
 		dv.append(self.m[primary])
 
-		print q
+		print "%s (%s)" % (q, str(dv))
 
 		try:
 			c=flask.current_app.db.db.cursor(oursql.DictCursor)
 			c.execute(q, dv)
 			c.close()
 			ret=True
+			self.changed=[]
 		except Exception as e:
                         flask.flash("%s Update Failed: %s" % (self.table, str(e)) )
 			print str(e)

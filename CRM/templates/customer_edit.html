@@ -25,13 +25,14 @@ Edit Customer {{ super() }}
         {% with messages = get_flashed_messages() %}
         {% if messages %}
                 {% for message in messages %}
-                        {{ message }}
+                       <li>{{ message }}</li>
                 {% endfor %}
+		<br>
         {% endif %}
         {% endwith %}
 		   
- 
-                    <form class="form-horizontal" method=POST action="{{ url_for('customer_edit', id=customer['ID']) }}">
+
+                    <form class="form-horizontal" method=POST action="{{ url_for('customer_edit', id=customer['ID']) }}" >
 
                     <div class="panel panel-default">
                         <div class="panel-heading">
@@ -97,6 +98,13 @@ Edit Customer {{ super() }}
                         <div class="panel-body">
 
 				{% for row in c.get_services() %}
+
+					<div class="form-group">
+					<label class="col-lg-3">Service:</label>
+					<div class="col-lg-6">
+					ID #{{ row['ID'] }} - Created {{ row['date_created'] }} - Modified {{ row['date_modified'] }}
+					</div>
+					</div>
 					
 					<div class="form-group">	
                                         <label class="col-lg-3">Service Type</label>
@@ -136,29 +144,198 @@ Edit Customer {{ super() }}
 
 
 					{% for quote in row.get_quotes() %}
-						Status, Paid, Amount, quote_type, Assigned To
-	
-						{{ quote }}
+
+                                                <div class="form-group">
+                                                <label class="col-lg-3">Quote:</label>
+                                                <div class="col-lg-6">
+						ID# {{ quote['ID'] }} - Created {{ quote['date_created'] }} - Modified {{ quote['date_modified'] }}
+                                                </div></div>
+
+						<div class="form-group">
+						<label class="col-lg-3">Quote Status</label>
+						<div class="col-lg-6">
+						<input type=text class="form-control" name="quote-{{ quote['ID'] }}-status" value="{{ quote['status'] }}" />
+						</div></div>
+
+                                                <div class="form-group">
+                                                <label class="col-lg-3">Quote Type</label>
+                                                <div class="col-lg-6">
+                                                <input type=text class="form-control" name="quote-{{ quote['ID'] }}-type" value="{{ quote['quote_type'] }}" />
+                                                </div></div>
+
+                                                <div class="form-group">
+                                                <label class="col-lg-3">Assigned To</label>
+                                                <div class="col-lg-6">
+                                                <input type=text autocomplete="off" class="typeahead_user form-control" name="quote-{{ quote['ID'] }}-owner_id" value="{{ quote['owner_id'] }}" />
+                                                </div></div>
+
+                                                <div class="form-group">
+                                                <label class="col-lg-3">Quote Amount $</label>
+                                                <div class="col-lg-6">
+                                                <input type=text class="form-control" name="quote-{{ quote['ID'] }}-amount" value="{{ quote['amount'] }}" />
+                                                </div></div>
+                                                <div class="form-group">
+                                                <label class="col-lg-3">Paid Amount $</label>
+                                                <div class="col-lg-6">
+                                                <input type=text class="form-control" name="quote-{{ quote['ID'] }}-paid" value="{{ quote['paid'] }}" />
+                                                </div></div>
+
+						<hr>
+
 					{% endfor %}
 
 					{% for appt in row.get_appointments() %}
-						Scheduled, Actual Arrival, Assigned to, Extra, Status
 
-						{{ appt }}
+                                                <div class="form-group">
+                                                <label class="col-lg-3">Appointment:</label>
+                                                <div class="col-lg-6">ID #{{ appt['ID'] }} - Created {{ appt['date_created'] }} - Modified {{ appt['date_modified'] }}
+                                                </div></div>
+
+                                                <div class="form-group">
+                                                <label class="col-lg-3">Scheduled Time</label>
+                                                <div class="col-lg-6">
+                                                   <div class="datetimepicker2" class="input-append">
+                                                        <input name="appt-{{ appt['ID'] }}-scheduled" value="{{ appt['scheduled'] }}" data-format="yyyy-MM-dd hh:mm:ss" type="text"></input>
+                                                        <span class="add-on">
+                                                            <i data-time-icon="glyphicon glyphicon-time" data-date-icon="glyphicon glyphicon-calendar"></i>
+                                                        </span>
+                                                    </div>
+                                                </div></div>
+                                                <div class="form-group">
+                                                <label class="col-lg-3">Actual Arrival</label>
+                                                <div class="col-lg-6">
+                                                   <div class="datetimepicker2" class="input-append">
+                                                        <input name="appt-{{ appt['ID'] }}-actual" value="{{ appt['actual'] }}" data-format="yyyy-MM-dd hh:mm:ss" type="text"></input>
+                                                        <span class="add-on">
+                                                            <i data-time-icon="glyphicon glyphicon-time" data-date-icon="glyphicon glyphicon-calendar"></i>
+                                                        </span>
+                                                    </div>
+                                                </div></div>
+
+                                                <div class="form-group">
+                                                <label class="col-lg-3">Assigned To</label>
+                                                <div class="col-lg-6">
+                                                <input type=text autocomplete="off" class="typeahead_user form-control" name="appt-{{ appt['ID'] }}-user_id" value="{{ appt['user_id'] }}" />
+                                                </div></div>
+
+                                                <div class="form-group">
+                                                <label class="col-lg-3">Extra Information</label>
+                                                <div class="col-lg-6">
+                                                <input type=text class="form-control" name="appt-{{ appt['ID'] }}-extra" value="{{ appt['extra'] }}" />
+                                                </div></div>
+
+                                                <div class="form-group">
+                                                <label class="col-lg-3">Status</label>
+                                                <div class="col-lg-6">
+                                                <input type=text class="form-control" name="appt-{{ appt['ID'] }}-status" value="{{ appt['status'] }}" />
+                                                </div></div>
+
+						<hr>
+
 					{% endfor %}
 
 		
 					<div class="form-group">	
-					<div class="col-lg-3">
-					<button type="button" onclick="" class="btn btn-sm btn-success">New Quote</button>
-					<button type="button" onclick="" class="btn btn-sm btn-success">New Appointment</button>
-					</div></div>
+					<div class="col-lg-6">
+
+	                                <div class="accordion" id="accordion3-{{ row['ID'] }}">
+        	                            <div class="accordion-group">
+                	                        <div class="accordion-heading">
+	
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3-{{ row['ID'] }}" href="#quote_collapse-{{ row['ID'] }}"><button type="button" class="btn btn-sm btn-success">New Quote</button></a>
+
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3-{{ row['ID'] }}" href="#appt_collapse-{{ row['ID'] }}"><button type="button" class="btn btn-sm btn-success">New Appointment</button></a>
+
+						<button type=button class="btn btn-sm btn-danger" onclick="if (confirm('Are you sure?')) location.href='{{ url_for('services_delete', id=row['ID']) }}';">Delete Service</button>
+
+                                	        </div>
+					    </div>
+					</div>
+				       </div></div>
+
+				     
+        	                                <div id="quote_collapse-{{ row['ID'] }}" class="accordion-body collapse out">
+                                                <div class="form-group">
+                                                <label class="col-lg-3">Quote Status</label>
+                                                <div class="col-lg-6">
+                                                <input type=text class="form-control" name="quote-new-{{ row['ID'] }}-status" />
+                                                </div></div>
+
+                                                <div class="form-group">
+                                                <label class="col-lg-3">Quote Type</label>
+                                                <div class="col-lg-6">
+                                                <input type=text class="form-control" name="quote-new-{{ row['ID'] }}-type" />
+                                                </div></div>
+
+                                                <div class="form-group">
+                                                <label class="col-lg-3">Assigned To</label>
+                                                <div class="col-lg-6">
+                                                <input type=text autocomplete="off" class="typeahead_user form-control" name="quote-new-{{ row['ID'] }}-owner_id" />
+                                                </div></div>
+
+                                                <div class="form-group">
+                                                <label class="col-lg-3">Quote Amount $</label>
+                                                <div class="col-lg-6">
+                                                <input type=text class="form-control" name="quote-new-{{ row['ID'] }}-amount" />
+                                                </div></div>
+                                                <div class="form-group">
+                                                <label class="col-lg-3">Paid Amount $</label>
+                                                <div class="col-lg-6">
+                                                <input type=text class="form-control" name="quote-new-{{ row['ID'] }}-paid" />
+                                                </div></div>
+
+						</div>
+
+						<div id="appt_collapse-{{ row['ID'] }}" class="accordion-body collapse out">
+						
+                                                <div class="form-group">
+                                                <label class="col-lg-3">Scheduled Time</label>
+                                                <div class="col-lg-6">
+                                                    <div class="datetimepicker2" class="input-append">
+                                                        <input name="appt-new-{{ row['ID'] }}-scheduled" data-format="yyyy-MM-dd hh:mm:ss" type="text"></input>
+                                                        <span class="add-on">
+                                                            <i data-time-icon="glyphicon glyphicon-time" data-date-icon="glyphicon glyphicon-calendar"></i>
+                                                        </span>
+                                                    </div>
+                                                </div></div>
+                                                <div class="form-group">
+                                                <label class="col-lg-3">Actual Arrival</label>
+                                                <div class="col-lg-6">
+                                                   <div class="datetimepicker2" class="input-append">
+                                                        <input name="appt-new-{{ row['ID'] }}-actual" data-format="yyyy-MM-dd hh:mm:ss" type="text"></input>
+                                                        <span class="add-on">
+                                                            <i data-time-icon="glyphicon glyphicon-time" data-date-icon="glyphicon glyphicon-calendar"></i>
+                                                        </span>
+                                                    </div>
+                                                </div></div>
+
+                                                <div class="form-group">
+                                                <label class="col-lg-3">Assigned To</label>
+                                                <div class="col-lg-6">
+                                                <input type=text autocomplete="off" class="typeahead_user" class="form-control" name="appt-new-{{ row['ID'] }}-user_id" />
+                                                </div></div>
+
+                                                <div class="form-group">
+                                                <label class="col-lg-3">Extra Information</label>
+                                                <div class="col-lg-6">
+                                                <input type=text class="form-control" name="appt-new-{{ row['ID'] }}-extra" />
+                                                </div></div>
+
+                                                <div class="form-group">
+                                                <label class="col-lg-3">Status</label>
+                                                <div class="col-lg-6">
+                                                <input type=text class="form-control" name="appt-new-{{ row['ID'] }}-status" />
+                                                </div></div>
+						
+					   </div>
+					</div>
+
+					</div>
 
 					<hr>
 
 				{% endfor %}
 
-				<!-- http://getbootstrap.com/2.3.2/javascript.html#typeahead -->
 
                                 <div class="accordion" id="accordion2">
                                     <div class="accordion-group">
@@ -253,13 +430,12 @@ Edit Customer {{ super() }}
                                     </div>
                                 </div>
 
-			</div></div>
-
+				<br>
                                 <div class="form-footer">
                                     <!-- <button type="button" class="btn btn-default btn-sm ng-scope" data-dismiss="modal">Clear</button> -->
                                     <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-save"></i>Save changes</button>
                                 </div>
-
+				<br><br>
 
                             </form>
 
@@ -312,7 +488,7 @@ Edit Customer {{ super() }}
  
 	    users.initialize();
 
-	    $("#contact-quote-user").typeahead(null, {name: "user", displayKey:function(val) {
+	    $(".typeahead_user, #contact-quote-user").typeahead(null, {name: "user", displayKey:function(val) {
 		return val.value;
 		}, templates:{
 		"suggestion": Handlebars.compile("<p>{% raw %}{{user}}{% endraw %}</p>")
