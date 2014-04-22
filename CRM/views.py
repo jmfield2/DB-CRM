@@ -107,9 +107,35 @@ def configure_views(app):
 	@app.route("/customers/delete/<int:id>")
 	@auth_required()
 	def customer_delete(id):
-		return ""
+		u = user(user_id=session['uid']).get()
+		c = customers(ID=id).get()
+
+		return render_template("customer_delete.html", user=u, customer=c)
 
 	# delete_confirm
+	@app.route("/customers/delete_confirm/<int:id>")
+	@auth_required()
+	def customer_delete_confirm(id):
+	
+		c = customers(ID=id)
+
+		import copy
+		l = []
+		for row in c.get_contacts(): l.append(copy.copy(row))
+		for row in c.get_services(): 
+			l.append(copy.copy(row))
+			for row2 in row.get_quotes(): l.append(copy.copy(row2))
+			for row2 in row.get_appointments(): l.append(copy.copy(row2))
+
+		for row in l: row.delete()
+
+		c.delete()
+
+		c.invalidate_cache()
+	
+		flash("Customer deleted")
+
+		return redirect( flask.url_for("customer_index") )
 
 	# edit
 	@app.route("/customers/edit/<int:id>", methods=['GET', 'POST'])
@@ -117,7 +143,11 @@ def configure_views(app):
 	def customer_edit(id):
 		u = user(user_id=session['uid']).get()
 
-                return render_template("customer_edit.html", user=u)
+		c = customers(ID=id)
+
+		flash( str(request.form) )
+
+                return render_template("customer_edit.html", user=u, c=c, customer=c.get(), customer_contact=customer_contact)
 
         @app.route("/customers/add", methods=['GET', 'POST'])
 	@auth_required()
