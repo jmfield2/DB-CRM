@@ -75,7 +75,13 @@ def configure_views(app):
 		u = user(user_id=session['uid']).get()
 		if 'Password' in u: del u['Password']
 
-		return render_template("index.html", user=u)
+		db = appointments(user_id=u['ID'])
+		a = []
+		import copy
+		for row in db: a.append(copy.copy(row))
+		a = sorted(a, key=lambda x: x['scheduled'])
+
+		return render_template("index.html", user=u, appt=a)
 
 
 	# Customers 

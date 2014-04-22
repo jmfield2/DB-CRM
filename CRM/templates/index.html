@@ -22,51 +22,35 @@ Dashboard
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
+
                             <div class="table-responsive">
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th>First Name</th>
-                                            <th>Last Name</th>
+                                            <th>Name</th>
                                             <th>Phone Number</th>
                                             <th>Service Type</th>
                                             <th>Appointment Time</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
+
+				<!-- danger, warning, info, success -->
+
                                     <tbody>
-                                        <tr class="danger">
-                                            <td>Mark</td>
-                                            <td>Otto</td>
-                                            <td>8139999999</td>
-                                            <td>Maintenance</td>
-                                            <td>2014-04-23 09:30:00</td>
-                                            <td>Mark</td>
-                                        </tr>
-                                        <tr class="warning">
-                                            <td>Jacob</td>
-                                            <td>Thornton</td>
-                                            <td>8139999999</td>
-                                            <td>Repair</td>
-                                            <td>2014-04-23 11:30:00</td>
-                                            <td>Mark</td>
-                                        </tr>
-                                        <tr class="info">
-                                            <td>Larry</td>
-                                            <td>the Bird</td>
-                                            <td>8139999999</td>
-                                            <td>Repair</td>
-                                            <td>2014-04-23 13:00:00</td>
-                                            <td>Mark</td>
-                                        </tr>
-                                        <tr class="success">
-                                            <td>John</td>
-                                            <td>Smith</td>
-                                            <td>8139999999</td>
-                                            <td>Service Call</td>
-                                            <td>2014-04-23 15:35:00</td>
-                                            <td>Mark</td>
-                                        </tr>
+					{% for row in appt %}
+						<tr class="info">
+							<!-- if actual green...if paid==green...if no actual and scheduled < now==red...if scheduled within 2 days==yellow -->
+
+							<td>{{ row.get_service().get_customer()["Name"] }}</td>
+							<!-- First entry, or "PHONE" -->
+							<td>{{ row.get_service().get_customer().get_primary_contact()["name"] }}: 
+							{{ row.get_service().get_customer().get_primary_contact()["data"] }}</td>
+							<td>{{ row.get_service()["service_type"] }} </td>
+							<td>{{ row["scheduled"] }}</td>
+							<td><a href="{{ url_for('customer_edit', id=row.get_service().get_customer()["ID"]) }}">Edit</a></td>
+						</tr>
+					{% endfor %}
                                     </tbody>
                                 </table>
                             </div>
