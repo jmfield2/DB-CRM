@@ -12,24 +12,37 @@ Login
 
 {% block body %}
 
-	{% with messages = get_flashed_messages() %}
-	{% if messages %}
+<!-- 	{% with messages = get_flashed_messages() %}
+	 {% if messages %}
 		{% for message in messages %}
 			{{ message }}
 		{% endfor %}	
-	{% endif %}
-	{% endwith %}
+	 {% endif %}
+	{% endwith %} -->
 
       <form class="form-signin" role="form" action="{{ url }}" method=POST>
         <h2 class="form-signin-heading">Please sign in</h2>
         <input name="email" type="email" class="form-control" placeholder="Email address" required autofocus>
+        <br>
         <input name="password" type="password" class="form-control" placeholder="Password" required>
 <!--         <label class="checkbox">
           <input type="checkbox" value="remember-me"> Remember me
         </label> -->
+        <br>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
         <br>
-        <button class="btn btn-lg btn-primary btn-block" type="register">Register</button>
+        <!-- <button class="btn btn-lg btn-primary btn-block" type="register">Register</button> -->
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              {{ message }}
+            {% endfor %}  
+          {% endif %}
+        {% endwith %}
+
       </form>
+
+
+
 {% endblock %}
 
