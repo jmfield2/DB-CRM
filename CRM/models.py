@@ -295,7 +295,7 @@ class services(Model):
 	data = {'ID':'','customer_id':'','Name':'','service_type':'','description':'','owner_id':'','date_created':'','date_modified':'','status':''}
 
 	def get_customer(self):
-		return customer(ID=self['customer_id'])
+		return customers(ID=self['customer_id'])
 
 	def get_owner(self):
 		return user(ID=self['owner_id'])
