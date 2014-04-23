@@ -66,13 +66,17 @@ Edit Customer {{ super() }}
                                     </div>
 				</div>
 
-				{% for row in customer_contact(customer_id=customer['ID'], contact_type=c.get_primary_contact()["contact_type"]) %}
+				{% for row in customer_contact(customer_id=customer['ID']) %}
 
 	                                <div class="form-group">
 					    <div class="col-lg-3">
+						 <input type=radio name="contact-primary" value="{{ row['ID'] }}" title="Make primary detail record" style="float:left;margin-right:15px" {{ "checked" if customer['primary_contact_id'] == row['ID'] }} />
+						 <input type="text" class="form-control" style="width:80%" name='contact-type-{{ row['ID'] }}' value="{{ row['contact_type'] }}" />
+					    </div>
+					    <div class="col-lg-3">
 						<input type=text class="form-control" name="contact-name-{{ row['ID'] }}" value="{{ row['name']|capitalize }}">
 					    </div>
-                	                    <div class="col-lg-6"> 
+                	                    <div class="col-lg-3"> 
                         	                <input type="text" class="form-control" name='contact-{{ row['ID'] }}' id="contact-{{ row['ID'] }}" value="{{ row['data'] }}" >
                                 	    </div>
 	                                </div>
@@ -328,9 +332,6 @@ Edit Customer {{ super() }}
                                                 </div></div>
 						
 					   </div>
-					</div>
-
-					</div>
 
 					<hr>
 
@@ -448,10 +449,13 @@ Edit Customer {{ super() }}
 	<div id="contactDetail_form" style="display:none">
 
 		<div class="form-group">
+			<div class="col-lg-3">
+                        <input type="text" class="form-control" name='contact-type-new' placeholder="ex: Office" />
+                        </div>
                         <div class="col-lg-3">
                         <input type=text class="form-control" name="contact-name-new" placeholder="ex: Email" >
                         </div>
-                        <div class="col-lg-6">
+                        <div class="col-lg-3">
                         <input type="text" class="form-control" name='contact-new' placeholder="ex: email@address.com" >
                 	</div>
                 </div>

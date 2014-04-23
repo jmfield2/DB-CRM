@@ -78,7 +78,22 @@ def configure_views(app):
 		db = appointments(user_id=u['ID'])
 		a = []
 		import copy
-		for row in db: a.append(copy.copy(row))
+		for row in db: 
+			tmp = copy.copy(row)
+			tmp.className = "default"
+
+			delta = tmp["scheduled"] - datetime.datetime.now()
+			if (tmp["actual"] is None or tmp["actual"] == "0000-00-00 00:00:00") and delta.days <= 3:
+				tmp.className = "danger"
+			elif delta.days <= 7:
+				tmp.className = "warning"
+	
+			if delta.days <= -30: continue
+
+			if tmp["actual"] is not None and tmp["actual"] <> "0000-00-00 00:00:00":
+				tmp.className = "success strike"
+
+			a.append(tmp)
 		a = sorted(a, key=lambda x: x['scheduled'])
 
 		return render_template("index.html", user=u, appt=a)
@@ -155,7 +170,7 @@ def configure_views(app):
 		c = customers(ID=id)
 
 		if len(request.form) > 0:
-
+			
 			# edit customer
                         d = {"customer_type":request.form.get('customer_type', c['customer_type']), "Name":request.form.get('Name', c['Name'])}
 			c.set_dict(d)
@@ -166,19 +181,21 @@ def configure_views(app):
 
 			# edit customer_contacts
 			import copy
-			type = request.form.get('contact_type', False)
+			primary = request.form.get('contact-primary', False)
+			if primary is not False and primary <> c['primary_contact_id']:
+                                c['primary_contact_id'] = primary 
+				c.update()			
 
-			if c.get_primary_contact().get() is not None:
-				ct = customer_contact(customer_id=c['ID'], contact_type=c.get_primary_contact()["contact_type"])
-				for row in ct:
-					tmp = copy.copy(row)
-					tmp["name"] = request.form.get("contact-name-" + str(row["ID"]), tmp["name"])
-					tmp["data"] = request.form.get("contact-" + str(row["ID"]), tmp["data"])
-					tmp["contact_type"] = type
-					if tmp.is_changed(): 
-						tmp["date_modified"] = datetime.datetime.now()
-						tmp.update()
-						flash("Customer updated")
+			ct = customer_contact(customer_id=c['ID'])
+			for row in ct:
+				tmp = copy.copy(row)
+				tmp["name"] = request.form.get("contact-name-" + str(row["ID"]), tmp["name"])
+				tmp["data"] = request.form.get("contact-" + str(row["ID"]), tmp["data"])
+				tmp["contact_type"] = request.form.get("contact-type-" + str(row["ID"]), tmp["contact_type"]) 
+				if tmp.is_changed(): 
+					tmp["date_modified"] = datetime.datetime.now()
+					tmp.update()
+					flash("Customer contact updated")
 
                         names = request.form.getlist("contact-name-new")
                         values = request.form.getlist("contact-new")
@@ -189,7 +206,7 @@ def configure_views(app):
 				ct = customer_contact().new()
 				ct["customer_id"] = c["ID"]
 				ct["created_by"] = session['uid']
-				ct["contact_type"] = type
+				ct["contact_type"] = "" 
 				ct["name"] = names[i]
 				ct["data"] = values[i]
 				ct["date_created"] = datetime.datetime.now()
@@ -291,8 +308,6 @@ def configure_views(app):
 			c.invalidate_cache()
 			c = customers(ID=id) 
 
-			flash( "Customer Updated. (%s) " % request.form )
-
                 return render_template("customer_edit.html", user=u, c=c, customer=c.get(), customer_contact=customer_contact)
 
         @app.route("/customers/add", methods=['GET', 'POST'])
@@ -356,6 +371,8 @@ def configure_views(app):
 
 				flash("Service Added (ID=%d)" % s)
 
+			c.invalidate_cache()
+
                 return render_template("customer_add.html", user=u)
 
         @app.route("/customers/index")
@@ -411,6 +428,52 @@ def configure_views(app):
                 if 'Password' in u: del u['Password']
 		
 		return render_template("user_settings.html", user=u)
+
+	@app.route("/users/index")
+	@auth_required()
+	def user_index():
+		u = user(user_id=session['uid']).get()
+		if 'Password' in u: del u['Password']
+
+		return render_template("user_index.html", user=u)
+
+	@app.route("/users/index.json")
+	@auth_required()
+	def user_index_json():
+                # sEcho, iTotalRecords, iTotalDisplayRecords
+
+                # sSearch?
+                c = user()
+
+                from flask import url_for
+
+                data = []
+                for row in c:
+                        data.append([row['ID'], row['Username'], row['Company'], str(row['date_created']), row['status']])
+
+                resp = {'aaData':data}
+
+                import json
+                return json.dumps(resp)
+
+	@app.route("/users/add", methods=['GET', 'POST'])
+	@auth_required()
+	def user_add():
+                u = user(user_id=session['uid']).get()
+                if 'Password' in u: del u['Password']
+
+		
+		return render_template("user_add.html", user=u)
+
+        @app.route("/users/add_acl", methods=['GET', 'POST'])
+        @auth_required()
+        def user_add_acl():
+                u = user(user_id=session['uid']).get()
+                if 'Password' in u: del u['Password']
+
+
+                return render_template("user_add.html", user=u)
+
 
 	# Access
 

@@ -23,12 +23,13 @@ Dashboard
                         <!-- /.panel-heading -->
                         <div class="panel-body">
 
+			
                             <div class="table-responsive">
                                 <table class="table">
                                     <thead>
                                         <tr>
                                             <th>Name</th>
-                                            <th>Phone Number</th>
+                                            <th>Contact Detail</th>
                                             <th>Service Type</th>
                                             <th>Appointment Time</th>
                                             <th>Actions</th>
@@ -36,10 +37,10 @@ Dashboard
                                     </thead>
 
 				<!-- danger, warning, info, success -->
-
+				
                                     <tbody>
 					{% for row in appt %}
-						<tr class="info">
+						<tr class="{{ row.className }}">
 							<!-- if actual green...if paid==green...if no actual and scheduled < now==red...if scheduled within 2 days==yellow -->
 
 							<td>{{ row.get_service().get_customer()["Name"] }}</td>
