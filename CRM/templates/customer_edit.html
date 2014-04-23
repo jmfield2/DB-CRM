@@ -59,13 +59,6 @@ Edit Customer {{ super() }}
 				
 				<!-- Customers_Contact details -->
 
-				<div class="form-group">
-                                    <label for="contact-detail-type" class="col-lg-3">Primary Contact Type</label>
-                                    <div class="col-lg-6">
-                                        <input type="text" class="form-control" name='contact_type' id="contact-detail-type" placeholder="ex: main" value="{{ c.get_primary_contact()["contact_type"] }}" >
-                                    </div>
-				</div>
-
 				{% for row in customer_contact(customer_id=customer['ID']) %}
 
 	                                <div class="form-group">

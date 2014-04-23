@@ -14,7 +14,13 @@ def auth_required():
 			if 'uid' in session: 
 				uid = session['uid']
 
+				import urlparse
 				# check for ACL rules in Access table for URL and UID
+				a = access(user_id=uid)
+				for row in a:
+					o = urlparse.urlparse(request.url)
+					if a['access_type'] == "URL" and a['access_data'] == o.path:
+						if a['access_rule'] == "DENY": flask.abort(401)
 
 	                        return f(*args, **kwargs)
 			else: return redirect("/login?next=%s" % request.url, code=302) # query_string 
@@ -24,6 +30,9 @@ def auth_required():
 
 
 from models import *
+
+# passlib algorithm as crypt for seamless namespace (pbkdf2_sha512, bcrypt)
+from passlib.hash import pbkdf2_sha512 as crypt
 
 def configure_views(app):
 
@@ -41,9 +50,6 @@ def configure_views(app):
 		from urlparse import urlparse
 		o = urlparse(next)
 		next = o[2] # Only allow relative PATH -- dont arbitrarily redirect to user-submitted URL
-
-		# passlib algorithm as crypt for seamless namespace (pbkdf2_sha512, bcrypt)
-		from passlib.hash import pbkdf2_sha512 as crypt
 
 		if 'email' in request.form:
 			sql = "SELECT * FROM Users where Username = ? AND status = 1"
@@ -435,7 +441,15 @@ def configure_views(app):
 		u = user(user_id=session['uid']).get()
 		if 'Password' in u: del u['Password']
 
-		return render_template("user_index.html", user=u)
+		import copy, json
+		a = []
+		db = access()
+		for row in db: 
+			tmp = row.get()	
+			link = "<a href='#' onclick='if (confirm(\"Are you sure?\")) location.href=\"%s\"; '>Delete</a>" % flask.url_for("user_acl_delete", id=tmp["ID"])
+			a.append([tmp["user_id"], "%s -> %s" % (tmp["access_rule"], tmp["access_data"]), str(tmp["date_created"]), link])
+
+		return render_template("user_index.html", user=u, acl=json.dumps(a))
 
 	@app.route("/users/index.json")
 	@auth_required()
@@ -445,16 +459,26 @@ def configure_views(app):
                 # sSearch?
                 c = user()
 
-                from flask import url_for
-
                 data = []
-                for row in c:
-                        data.append([row['ID'], row['Username'], row['Company'], str(row['date_created']), row['status']])
+                for row in c:	
+			link = "<a href='#' onclick='if (confirm(\"Are you sure?\")) location.href=\"%s\"; '>Delete</a>" % flask.url_for("user_delete", id=row["ID"])
+                        data.append([row['ID'], row['Username'], row['Company'], str(row['date_created']), row['status'], link])
 
                 resp = {'aaData':data}
 
                 import json
                 return json.dumps(resp)
+
+	@app.route("/users/delete/<int:id>")
+	@auth_required()
+	def user_delete(id):
+
+		u = user(user_id=id)
+		u.delete()
+		u.invalidate_cache()
+		flash("User deleted")
+
+		return redirect(flask.url_for("user_index"))
 
 	@app.route("/users/add", methods=['GET', 'POST'])
 	@auth_required()
@@ -462,8 +486,36 @@ def configure_views(app):
                 u = user(user_id=session['uid']).get()
                 if 'Password' in u: del u['Password']
 
+		if len(request.form) > 0 and request.form.get("user-new-password") == request.form.get("user-new-verify") and len(request.form.get("user-new-password")) > 0:
+			u = user().new()
+			u["Username"] = request.form.get("user-new-username")
+			u["Password"] = crypt.encrypt(request.form.get("user-new-password"))
+			u["Company"] = request.form.get("user-new-company")
+			u["status"] = 1
+			u["date_created"] = datetime.datetime.now()
+			u["date_modified"] = datetime.datetime.now()
+			
+			retid = u.insert()
+			u.invalidate_cache()
+
+			if retid is not False: flash("User added")			
+		elif len(request.form) > 0: flash("Passwords did not match")
+
+		return redirect(flask.url_for("user_index"))
+
+	# Access
+
+	@app.route("/user/acl_delete/<int:id>")
+	@auth_required()
+	def user_acl_delete(id):
 		
-		return render_template("user_add.html", user=u)
+		a=access(ID=id)
+		a.delete()
+		a.invalidate_cache()
+
+		flash("Access Rule Deleted")
+
+		return redirect(request.referrer)
 
         @app.route("/users/add_acl", methods=['GET', 'POST'])
         @auth_required()
@@ -471,9 +523,19 @@ def configure_views(app):
                 u = user(user_id=session['uid']).get()
                 if 'Password' in u: del u['Password']
 
+		a = access().new()
+		a['user_id'] = request.form.get("acl-new-user_id", False)
+		a['date_created'] = datetime.datetime.now()
+                a['date_modified'] = datetime.datetime.now()	
+		a['created_by'] = session['uid']
+		a['access_type'] =  request.form.get("acl-new-access_type", False)
+		a['access_rule'] =  request.form.get("acl-new-access_rule", False)
+		a['access_data'] =  request.form.get("acl-new-access_data", False)
+		a.insert()
+		a.invalidate_cache()
 
-                return render_template("user_add.html", user=u)
+		flash("Access Rule Added")		
 
+                return redirect("/users/index")
 
-	# Access
 
