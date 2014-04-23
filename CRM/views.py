@@ -17,9 +17,13 @@ def auth_required():
 				import urlparse
 				# check for ACL rules in Access table for URL and UID
 				a = access(user_id=uid)
+
 				for row in a:
 					o = urlparse.urlparse(request.url)
-					if a['access_type'] == "URL" and a['access_data'] == o.path:
+					# XXX if allow is found for "higher" scope, stop processing other rules
+
+					if (a['access_type'] == "URL" and a['access_data'] == o.path) or \
+					   (a['access_type'] == "FN" and a['access_data'] == f.__name__):
 						if a['access_rule'] == "DENY": flask.abort(401)
 
 	                        return f(*args, **kwargs)
@@ -459,10 +463,12 @@ def configure_views(app):
                 # sSearch?
                 c = user()
 
+		import copy
                 data = []
-                for row in c:	
-			link = "<a href='#' onclick='if (confirm(\"Are you sure?\")) location.href=\"%s\"; '>Delete</a>" % flask.url_for("user_delete", id=row["ID"])
-                        data.append([row['ID'], row['Username'], row['Company'], str(row['date_created']), row['status'], link])
+                for row in c:
+			tmp = copy.copy(row)	
+			link = "<a href='#' onclick='if (confirm(\"Are you sure?\")) location.href=\"%s\"; '>Delete</a>" % flask.url_for("user_delete", id=tmp["ID"])
+                        data.append([tmp['ID'], tmp['Username'], tmp['Company'], str(tmp['date_created']), tmp['status'], link])
 
                 resp = {'aaData':data}
 
