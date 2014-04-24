@@ -73,8 +73,8 @@ class Model(object):
 		self.id = self.id + 1
 		self.m = None
 		self.hydrate()
-			
-		if self.m is None and self.id > 1: raise StopIteration
+	
+		if self.m is None: raise StopIteration # and self.id > 1: raise StopIteration
 		return self
 
 	def __setitem__(self, key, val):
@@ -110,24 +110,33 @@ class Model(object):
 		ckey = self.q + str(self.d)
 
 		if ckey in _cached and self.id in _cached[ckey]: 
+			print "hydrate: (cached) %d - %s" % (self.id, self.q)
 			self.m = _cached[ckey][self.id]
 			return
+
+                print "hydrate: %d - %s" % (self.id, self.q)
 
 		try:
 			# No CACHE, but also no cursor...quickly execute cursor to fetch new row
 			if self.curs is None:
-				print "_cached execute: %s" % self.q	
-				self.curs=app.db.db.cursor(oursql.DictCursor)
+				print "_cached execute: %d, %s" % (self.id, self.q)
+				self.curs=flask.current_app.db.db.cursor(oursql.DictCursor)
         	                self.curs.execute(self.q, self.d)
+				
+				for i in range(0, self.id-1): self.curs.fetchone() # catch up to current ptr
 
 			self.m = self.curs.fetchone()
 
-			if ckey in _cached: _cached[ckey][self.id] = dict(self.m)
+			if self.m is None: return
+			elif ckey in _cached: _cached[ckey][self.id] = dict(self.m)
 			else: _cached[ckey] = {self.id: dict(self.m)}
 
 			# XXX hydrate self.data 
-		except:
+		except Exception as e:
+
 			# The cursor probably has no rows remaining, so hydrate self with empty dict
+			if e[0] is None and e[1] == "no results available": self.m = None
+			else: print str(e)
 
 			# Only set this to blank if we are not iterating
 			if self.m is not None: self.new() 
@@ -165,7 +174,9 @@ class Model(object):
                         c.execute(q, [self['ID']])
 		except Exception as e:
 			flask.flash(str(e))
-			
+	
+		self.invalidate_cache()
+		
 		return 
 
 	def invalidate_cache(self):
@@ -198,6 +209,7 @@ class Model(object):
 			print str(e)
 			pass
 
+		self.invalidate_cache()
 		# hydrate with self.primary/curs.lastrowid
 		return ret		
 
@@ -233,6 +245,8 @@ class Model(object):
                         flask.flash("%s Update Failed: %s" % (self.table, str(e)) )
 			print str(e)
 			ret=False
+
+		self.invalidate_cache()
 
 		return ret
 
